@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 
 @Entity
-@Table(name= "seg_fornecedor")
+@Table(name= "seg_fornecedores")
 
 public class Fornecedor {
 /*a.	Razão Social
@@ -16,6 +16,7 @@ f.	E-mail de contato
 */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name= "id_fornecedor")
     private Long id;
     @Column(name = "razao_social_fornecedor", unique = false, nullable = false, length = 100)
     private String razaoSocial;

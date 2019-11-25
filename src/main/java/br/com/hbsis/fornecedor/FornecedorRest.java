@@ -26,6 +26,14 @@ public class FornecedorRest{
     }
 
     @GetMapping("/{id}")
+    public FornecedorDTO find(@PathVariable("id") Long id) {
+
+        LOGGER.info("Recebendo find by ID... id: [{}]", id);
+
+        return this.fornecedorService.findById(id);
+    }
+
+    @PutMapping("/{id}")
     public FornecedorDTO update(@PathVariable("id") Long id, @RequestBody FornecedorDTO fornecedorDTO){
         LOGGER.info("Recebendo Update para Fornecedor de ID: {}", id);
         LOGGER.debug("Payload: {}", fornecedorDTO);
