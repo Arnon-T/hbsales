@@ -44,6 +44,7 @@ public class FornecedorDTO {
         );
     }
 
+
     public Long getId() {
         return id;
     }

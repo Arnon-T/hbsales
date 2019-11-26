@@ -19,12 +19,15 @@ B) Fornecedor da categoria
 */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @CsvBindByName(column = "codigo_categoria_produto")
     @Column(name = "id_categoria_produto")
     private Long id;
 
+    @CsvBindByName(column = "codigo_categoria_produto")
     @Column(name = "codigo_categoria_produto", unique = true, nullable = false)
     private Long codigoCategoriaProduto;
 
+    @CsvBindByName(column = "nome_categoria_produto")
     @Column(name = "nome_categoria_produto", unique = false, nullable = false, length = 100)
     private String nomeCategoriaProduto;
 

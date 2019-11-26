@@ -18,6 +18,10 @@ public class FornecedorService {
         this.iFornecedorRepository = iFornecedorRepository;
     }
 
+    public FornecedorService() {
+        iFornecedorRepository = null;
+    }
+
     public FornecedorDTO save(FornecedorDTO fornecedorDTO){
 
         this.validate(fornecedorDTO);

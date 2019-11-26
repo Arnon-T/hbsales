@@ -2,11 +2,18 @@ package br.com.hbsis.categoria.produto;
 
 import br.com.hbsis.fornecedor.Fornecedor;
 import br.com.hbsis.fornecedor.FornecedorDTO;
+import br.com.hbsis.fornecedor.FornecedorService;
+import com.opencsv.CSVReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +40,43 @@ public class CategoriaProdutoService {
             lista.add(construtor);
         }
         return lista;
+    }
+
+    public List<CategoriaProduto> readAll(Reader reader) throws Exception {
+        CSVReader csvReader = new CSVReader(reader);
+        List<CategoriaProduto> resultadoLeitura = new ArrayList<>();
+        String[] linha;
+        while((linha = csvReader.readNext()) != null ) {
+            CategoriaProduto categoriaProduto = new CategoriaProduto();
+
+            FornecedorService fornecedorService = new FornecedorService();
+            FornecedorDTO fornecedorDTO;
+            Fornecedor fornecedor = new Fornecedor();
+
+            fornecedorDTO = fornecedorService.findById(Long.parseLong(linha[3]));
+
+            fornecedor.setId(fornecedorDTO.getId());
+            fornecedor.setRazaoSocial(fornecedorDTO.getRazaoSocial());
+            fornecedor.setCnpj(fornecedorDTO.getCnpj());
+            fornecedor.setNomeFantasia(fornecedorDTO.getNomeFantasia());
+            fornecedor.setEndereco(fornecedorDTO.getEndereco());
+            fornecedor.setTelefone(fornecedorDTO.getTelefone());
+            fornecedor.setEmail(fornecedorDTO.getEmail());
+
+            categoriaProduto.setCodigoCategoriaProduto(Long.parseLong(linha[1]));
+            categoriaProduto.setNomeCategoriaProduto(linha[2]);
+            categoriaProduto.setFornecedor(fornecedor);
+
+            resultadoLeitura.add(categoriaProduto);
+        }
+        reader.close();
+        csvReader.close();
+        return resultadoLeitura;
+    }
+
+    public List<CategoriaProduto> saveAll(List<CategoriaProduto> categoriaProdutos) throws Exception {
+
+        return iCategoriaProdutoRepository.saveAll(categoriaProdutos);
     }
 
     public CategoriaProdutoDTO save(CategoriaProdutoDTO categoriaProdutoDTO){
@@ -72,6 +116,7 @@ public class CategoriaProdutoService {
 
         }
     }
+
     public CategoriaProdutoDTO findById(Long id) {
         Optional<CategoriaProduto> categoriaProdutoOptional = this.iCategoriaProdutoRepository.findById(id);
 

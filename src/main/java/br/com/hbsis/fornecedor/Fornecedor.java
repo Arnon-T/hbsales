@@ -31,6 +31,10 @@ f.	E-mail de contato
     @Column(name = "email_fornecedor", unique = false, nullable = false)
     private String email;
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }
