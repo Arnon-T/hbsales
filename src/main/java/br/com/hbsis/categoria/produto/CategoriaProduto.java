@@ -2,6 +2,8 @@ package br.com.hbsis.categoria.produto;
 
 import br.com.hbsis.fornecedor.Fornecedor;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.opencsv.bean.CsvBindAndJoinByPosition;
+import com.opencsv.bean.CsvBindByName;
 
 import javax.persistence.*;
 
@@ -20,25 +22,31 @@ B) Fornecedor da categoria
     @Column(name = "id_categoria_produto")
     private Long id;
 
+    @Column(name = "codigo_categoria_produto", unique = true, nullable = false)
+    private Long codigoCategoriaProduto;
+
     @Column(name = "nome_categoria_produto", unique = false, nullable = false, length = 100)
     private String nomeCategoriaProduto;
 
     @ManyToOne
     @JoinColumn(name = "id_fornecedor_categoria_produto", referencedColumnName = "id_fornecedor")
     @JsonDeserialize
+    @CsvBindByName(column = "id_fornecedor_categoria_produto")
     private Fornecedor fornecedor;
 
     public Long getId() {
         return id;
     }
 
+    public Long getCodigoCategoriaProduto() { return codigoCategoriaProduto; }
+
+    public void setCodigoCategoriaProduto(Long codigoCategoriaProduto) { this.codigoCategoriaProduto = codigoCategoriaProduto; }
+
     public String getNomeCategoriaProduto() {
         return nomeCategoriaProduto;
     }
 
-    public void setNomeCategoriaProduto(String nomeCategoriaProduto) {
-        this.nomeCategoriaProduto = nomeCategoriaProduto;
-    }
+    public void setNomeCategoriaProduto(String nomeCategoriaProduto) { this.nomeCategoriaProduto = nomeCategoriaProduto; }
 
     public Fornecedor getFornecedor() {
         return fornecedor;
@@ -52,8 +60,9 @@ B) Fornecedor da categoria
     public String toString() {
         return "CategoriaProduto{" +
                 "id=" + id +
+                ", codigoCategoriaProduto=" + codigoCategoriaProduto +
                 ", nomeCategoriaProduto='" + nomeCategoriaProduto + '\'' +
-                ", fornecedor=" + fornecedor.toString() +
+                ", fornecedor=" + fornecedor +
                 '}';
     }
 }

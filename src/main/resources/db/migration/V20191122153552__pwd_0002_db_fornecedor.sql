@@ -1,10 +1,10 @@
-create table seg_fornecedor
+create table seg_fornecedores
 (
-    id    BIGINT IDENTITY (1, 1) NOT NULL,
-    razao_social_fornecedor VARCHAR(100)           NOT NULL,
-    cnpj_fornecedor VARCHAR(20)           NOT NULL,
-    nome_fantasia_fornecedor VARCHAR(100)           NOT NULL,
-    endereco_fornecedor VARCHAR(255)           NOT NULL,
-    telefone_fornecedor  INT            NOT NULL,
-    email_fornecedor  VARCHAR(20)            NOT NULL
+    id_fornecedor BIGINT IDENTITY (1, 1) NOT NULL PRIMARY KEY,
+    razao_social_fornecedor VARCHAR(100) NOT NULL,
+    cnpj_fornecedor VARCHAR(20) NOT NULL UNIQUE,
+    nome_fantasia_fornecedor VARCHAR(100) NOT NULL,
+    endereco_fornecedor VARCHAR(255) NOT NULL,
+    telefone_fornecedor  INT NOT NULL,
+    email_fornecedor  VARCHAR(20) NOT NULL
 );

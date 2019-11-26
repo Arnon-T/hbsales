@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +22,19 @@ public class CategoriaProdutoService {
         this.iCategoriaProdutoRepository = iCategoriaProdutoRepository;
     }
 
+    public List<CategoriaProduto> findAll(){
+        return iCategoriaProdutoRepository.findAll();
+    }
+
+    public List<String> listToPrint(){
+        List<String> lista = new ArrayList<>();
+        for(CategoriaProduto linhaCSV : iCategoriaProdutoRepository.findAll()){
+            String construtor = linhaCSV.getId() + ";" + linhaCSV.getCodigoCategoriaProduto() + ";" + linhaCSV.getNomeCategoriaProduto() + ";" + linhaCSV.getFornecedor().getId()+ ";";
+            lista.add(construtor);
+        }
+        return lista;
+    }
+
     public CategoriaProdutoDTO save(CategoriaProdutoDTO categoriaProdutoDTO){
 
         this.validate(categoriaProdutoDTO);
@@ -30,6 +45,7 @@ public class CategoriaProdutoService {
         CategoriaProduto categoriaProduto = new CategoriaProduto();
 
         categoriaProduto.setNomeCategoriaProduto(categoriaProdutoDTO.getNomeCategoriaProduto());
+        categoriaProduto.setCodigoCategoriaProduto(categoriaProdutoDTO.getCodigoCategoriaProduto());
         categoriaProduto.setFornecedor(categoriaProdutoDTO.getFornecedor());
 
         categoriaProduto = this.iCategoriaProdutoRepository.save(categoriaProduto);
@@ -47,6 +63,9 @@ public class CategoriaProdutoService {
         }
         if (StringUtils.isEmpty(categoriaProdutoDTO.getNomeCategoriaProduto())) {
             throw new IllegalArgumentException("Nome não deve ser nulo/vazio");
+        }
+        if (StringUtils.isEmpty(categoriaProdutoDTO.getCodigoCategoriaProduto())) {
+            throw new IllegalArgumentException("Codigo não deve ser nulo/vazio");
         }
         if (StringUtils.isEmpty(categoriaProdutoDTO.getFornecedor().getId())) {
             throw new IllegalArgumentException("ID Fornecedor não deve ser nulo/vazio");
@@ -76,6 +95,7 @@ public class CategoriaProdutoService {
 
 
             categoriaProdutoDTO.setNomeCategoriaProduto(categoriaProdutoDTO.getNomeCategoriaProduto());
+            categoriaProdutoDTO.setCodigoCategoriaProduto(categoriaProdutoDTO.getCodigoCategoriaProduto());
             categoriaProdutoDTO.setFornecedor(categoriaProdutoDTO.getFornecedor());
 
             categoriaProdutoExistente = this.iCategoriaProdutoRepository.save(categoriaProdutoExistente);

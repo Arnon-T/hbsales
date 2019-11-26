@@ -22,7 +22,7 @@ f.	E-mail de contato
     private String razaoSocial;
     @Column(name = "cnpj_fornecedor" , unique = true, nullable = false, length = 20)
     private String cnpj;
-    @Column(name = "nome_fantasia_fornecedor", unique = false, nullable = false, length = 100)
+    @Column(name = "nome_fantasia_fornecedor", unique = true, nullable = false, length = 100)
     private String nomeFantasia;
     @Column(name = "endereco_fornecedor", unique = false, nullable = false, length = 255)
     private String endereco;
