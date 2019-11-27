@@ -3,18 +3,30 @@ package br.com.hbsis.categoria.produto;
 import br.com.hbsis.fornecedor.Fornecedor;
 import br.com.hbsis.fornecedor.FornecedorDTO;
 import br.com.hbsis.fornecedor.FornecedorService;
+import br.com.hbsis.fornecedor.IFornecedorRepository;
+import br.com.hbsis.usuario.IUsuarioRepository;
+import com.opencsv.CSVParser;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.ICSVParser;
+import com.opencsv.bean.ColumnPositionMappingStrategy;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+import rx.BackpressureOverflow;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,10 +36,13 @@ public class CategoriaProdutoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoriaProdutoService.class);
 
     private final ICategoriaProdutoRepository iCategoriaProdutoRepository;
+    private final FornecedorService fornecedorService;
 
-    public CategoriaProdutoService(ICategoriaProdutoRepository iCategoriaProdutoRepository) {
+    public CategoriaProdutoService(ICategoriaProdutoRepository iCategoriaProdutoRepository, FornecedorService fornecedorService) {
         this.iCategoriaProdutoRepository = iCategoriaProdutoRepository;
+        this.fornecedorService = fornecedorService;
     }
+
 
     public List<CategoriaProduto> findAll(){
         return iCategoriaProdutoRepository.findAll();
@@ -42,18 +57,32 @@ public class CategoriaProdutoService {
         return lista;
     }
 
-    public List<CategoriaProduto> readAll(Reader reader) throws Exception {
-        CSVReader csvReader = new CSVReader(reader);
+    public List<CategoriaProduto> readAll(MultipartFile file) throws Exception {
+
+        InputStreamReader reader = new InputStreamReader(file.getInputStream());
+
+        CSVReader csvReader = new CSVReaderBuilder(reader)
+                .withSkipLines(1)
+                .build();
+
+
+        List<String[]> linhaString = csvReader.readAll();
+
         List<CategoriaProduto> resultadoLeitura = new ArrayList<>();
-        String[] linha;
-        while((linha = csvReader.readNext()) != null ) {
+
+        for (String[] linha : linhaString) {
+            try {
+
+            String[] bean = linha[0].replaceAll("\"","").split(";");
+
             CategoriaProduto categoriaProduto = new CategoriaProduto();
-
-            FornecedorService fornecedorService = new FornecedorService();
-            FornecedorDTO fornecedorDTO;
             Fornecedor fornecedor = new Fornecedor();
+            FornecedorDTO fornecedorDTO = new FornecedorDTO();
 
-            fornecedorDTO = fornecedorService.findById(Long.parseLong(linha[3]));
+            categoriaProduto.setCodigoCategoriaProduto(Long.parseLong(bean[1]));
+            categoriaProduto.setNomeCategoriaProduto(bean[2]);
+
+            fornecedorDTO = fornecedorService.findById(Long.parseLong(bean[3]));
 
             fornecedor.setId(fornecedorDTO.getId());
             fornecedor.setRazaoSocial(fornecedorDTO.getRazaoSocial());
@@ -63,15 +92,16 @@ public class CategoriaProdutoService {
             fornecedor.setTelefone(fornecedorDTO.getTelefone());
             fornecedor.setEmail(fornecedorDTO.getEmail());
 
-            categoriaProduto.setCodigoCategoriaProduto(Long.parseLong(linha[1]));
-            categoriaProduto.setNomeCategoriaProduto(linha[2]);
             categoriaProduto.setFornecedor(fornecedor);
 
             resultadoLeitura.add(categoriaProduto);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
         }
-        reader.close();
-        csvReader.close();
-        return resultadoLeitura;
+
+        return iCategoriaProdutoRepository.saveAll(resultadoLeitura);
     }
 
     public List<CategoriaProduto> saveAll(List<CategoriaProduto> categoriaProdutos) throws Exception {

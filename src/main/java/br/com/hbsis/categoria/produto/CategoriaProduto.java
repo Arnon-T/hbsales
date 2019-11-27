@@ -19,22 +19,22 @@ B) Fornecedor da categoria
 */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @CsvBindByName(column = "codigo_categoria_produto")
     @Column(name = "id_categoria_produto")
+    //@CsvBindByName(column = "codigo_categoria_produto")
     private Long id;
 
-    @CsvBindByName(column = "codigo_categoria_produto")
     @Column(name = "codigo_categoria_produto", unique = true, nullable = false)
+    //@CsvBindByName(column = "codigo_categoria_produto")
     private Long codigoCategoriaProduto;
 
-    @CsvBindByName(column = "nome_categoria_produto")
     @Column(name = "nome_categoria_produto", unique = false, nullable = false, length = 100)
+    //@CsvBindByName(column = "nome_categoria_produto")
     private String nomeCategoriaProduto;
 
     @ManyToOne
     @JoinColumn(name = "id_fornecedor_categoria_produto", referencedColumnName = "id_fornecedor")
     @JsonDeserialize
-    @CsvBindByName(column = "id_fornecedor_categoria_produto")
+    //@CsvBindByName(column = "id_fornecedor_categoria_produto")
     private Fornecedor fornecedor;
 
     public Long getId() {

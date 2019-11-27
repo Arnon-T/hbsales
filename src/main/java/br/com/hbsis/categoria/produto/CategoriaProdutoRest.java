@@ -11,6 +11,7 @@ import com.opencsv.CSVWriter;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -62,8 +63,8 @@ public class CategoriaProdutoRest{
 
     @PostMapping("/import-csv-categorias")
     public void importCSV(@RequestParam("file") MultipartFile file) throws Exception {
-        Reader reader = Files.newBufferedReader(Paths.get("C:/hbsales/categorias.csv"));
-        categoriaProdutoService.saveAll(categoriaProdutoService.readAll(reader));
+
+        categoriaProdutoService.readAll(file);
     }
 
 
