@@ -28,6 +28,7 @@ public class CategoriaProdutoDTO {
 
     public static CategoriaProdutoDTO of(CategoriaProduto categoriaProduto) {
         return new CategoriaProdutoDTO(
+                categoriaProduto.getId(),
                 categoriaProduto.getNomeCategoriaProduto(),
                 categoriaProduto.getCodigoCategoriaProduto(),
                 categoriaProduto.getFornecedor()
