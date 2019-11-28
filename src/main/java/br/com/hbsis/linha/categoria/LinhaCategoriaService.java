@@ -52,7 +52,7 @@ public class LinhaCategoriaService {
             try{
                 String[] bean = linha[0].replaceAll("\"","").split(";");
 
-                //REVISAR TUDO, USAR APENAS ID 
+                //REVISAR TUDO, USAR APENAS ID
 
                 LinhaCategoria linhaCategoria = new LinhaCategoria();
                 CategoriaProduto categoriaProduto = new CategoriaProduto();
