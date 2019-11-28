@@ -52,6 +52,8 @@ public class LinhaCategoriaService {
             try{
                 String[] bean = linha[0].replaceAll("\"","").split(";");
 
+                //REVISAR TUDO, USAR APENAS ID 
+
                 LinhaCategoria linhaCategoria = new LinhaCategoria();
                 CategoriaProduto categoriaProduto = new CategoriaProduto();
                 Fornecedor fornecedor = new Fornecedor();
@@ -60,16 +62,7 @@ public class LinhaCategoriaService {
                 FornecedorDTO fornecedorDTO = fornecedorService.findById(categoriaProdutoDTO.getFornecedor().getId());
 
                 linhaCategoria.setNomeLinhaCategoria(bean[2]);
-
-                fornecedor.setId(fornecedorDTO.getId());
-                fornecedor.setRazaoSocial(fornecedorDTO.getRazaoSocial());
-                fornecedor.setCnpj(fornecedorDTO.getCnpj());
-                fornecedor.setNomeFantasia(fornecedorDTO.getNomeFantasia());
-                fornecedor.setEndereco(fornecedorDTO.getEndereco());
-                fornecedor.setTelefone(fornecedorDTO.getTelefone());
-                fornecedor.setEmail(fornecedorDTO.getEmail());
-
-                categoriaProduto.setFornecedor(fornecedor);
+                categoriaProduto.setFornecedorId(Long.parseLong(bean[3]));
 
                 linhaCategoria.setCategoriaProduto(categoriaProduto);
 

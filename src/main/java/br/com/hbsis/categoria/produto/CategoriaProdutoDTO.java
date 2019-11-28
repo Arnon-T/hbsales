@@ -6,23 +6,23 @@ public class CategoriaProdutoDTO {
     private Long id;
     private String nomeCategoriaProduto;
     private Long codigoCategoriaProduto;
-    private Fornecedor fornecedor;
+    private Long fornecedorId;
 
 
     public CategoriaProdutoDTO() {
     }
 
-    public CategoriaProdutoDTO(String nomeCategoriaProduto, Long codigoCategoriaProduto, Fornecedor fornecedor) {
+    public CategoriaProdutoDTO(String nomeCategoriaProduto, Long codigoCategoriaProduto, Long fornecedorId) {
         this.nomeCategoriaProduto = nomeCategoriaProduto;
         this.codigoCategoriaProduto = codigoCategoriaProduto;
-        this.fornecedor = fornecedor;
+        this.fornecedorId = fornecedorId;
     }
 
-    public CategoriaProdutoDTO(Long id, String nomeCategoriaProduto, Long codigoCategoriaProduto, Fornecedor fornecedor) {
+    public CategoriaProdutoDTO(Long id, String nomeCategoriaProduto, Long codigoCategoriaProduto, Long fornecedorId) {
         this.id = id;
         this.nomeCategoriaProduto = nomeCategoriaProduto;
         this.codigoCategoriaProduto = codigoCategoriaProduto;
-        this.fornecedor = fornecedor;
+        this.fornecedorId = fornecedorId;
     }
 
 
@@ -31,9 +31,11 @@ public class CategoriaProdutoDTO {
                 categoriaProduto.getId(),
                 categoriaProduto.getNomeCategoriaProduto(),
                 categoriaProduto.getCodigoCategoriaProduto(),
-                categoriaProduto.getFornecedor()
+                categoriaProduto.g
         );
     }
+
+
 
     public Long getId() {
         return id;
@@ -47,12 +49,12 @@ public class CategoriaProdutoDTO {
         this.nomeCategoriaProduto = nomeCategoriaProduto;
     }
 
-    public Fornecedor getFornecedor() {
-        return fornecedor;
+    public Long getFornecedorId() {
+        return fornecedorId;
     }
 
-    public void setFornecedor(Fornecedor fornecedor) {
-        this.fornecedor = fornecedor;
+    public void setFornecedorId(Long fornecedorId) {
+        this.fornecedorId = fornecedorId;
     }
 
     public Long getCodigoCategoriaProduto() { return codigoCategoriaProduto; }
@@ -65,7 +67,7 @@ public class CategoriaProdutoDTO {
                 "id=" + id +
                 ", nomeCategoriaProduto='" + nomeCategoriaProduto + '\'' +
                 ", codigoCategoriaProduto=" + codigoCategoriaProduto +
-                ", fornecedor=" + fornecedor.getId() +
+                ", fornecedor=" + fornecedorId +
                 '}';
     }
 }

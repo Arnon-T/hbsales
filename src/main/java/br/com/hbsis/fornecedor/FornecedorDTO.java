@@ -1,7 +1,11 @@
 package br.com.hbsis.fornecedor;
 
+import javax.validation.constraints.NotNull;
+
 public class FornecedorDTO {
+
     private Long id;
+    @NotNull
     private String razaoSocial;
     private String cnpj;
     private String nomeFantasia;
