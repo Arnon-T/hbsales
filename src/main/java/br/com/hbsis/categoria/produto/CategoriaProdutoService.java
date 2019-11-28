@@ -43,19 +43,18 @@ public class CategoriaProdutoService {
         this.fornecedorService = fornecedorService;
     }
 
-
     public List<CategoriaProduto> findAll(){
         return iCategoriaProdutoRepository.findAll();
     }
 
-    public List<String> listToPrint(){
-        List<String> lista = new ArrayList<>();
-        for(CategoriaProduto linhaCSV : iCategoriaProdutoRepository.findAll()){
-            String construtor = linhaCSV.getId() + ";" + linhaCSV.getCodigoCategoriaProduto() + ";" + linhaCSV.getNomeCategoriaProduto() + ";" + linhaCSV.getFornecedor().getId()+ ";";
-            lista.add(construtor);
-        }
-        return lista;
-    }
+//    public List<String> listToPrint(){
+//        List<String> lista = new ArrayList<>();
+//        for(CategoriaProduto linhaCSV : iCategoriaProdutoRepository.findAll()){
+//            String construtor = linhaCSV.getId() + ";" + linhaCSV.getCodigoCategoriaProduto() + ";" + linhaCSV.getNomeCategoriaProduto() + ";" + linhaCSV.getFornecedor().getId()+ ";";
+//            lista.add(construtor);
+//        }
+//        return lista;
+//    }
 
     public List<CategoriaProduto> readAll(MultipartFile file) throws Exception {
 
@@ -169,9 +168,9 @@ public class CategoriaProdutoService {
             LOGGER.debug("Fornecedor Existente: {}", categoriaProdutoExistente);
 
 
-            categoriaProdutoDTO.setNomeCategoriaProduto(categoriaProdutoDTO.getNomeCategoriaProduto());
-            categoriaProdutoDTO.setCodigoCategoriaProduto(categoriaProdutoDTO.getCodigoCategoriaProduto());
-            categoriaProdutoDTO.setFornecedor(categoriaProdutoDTO.getFornecedor());
+            categoriaProdutoExistente.setNomeCategoriaProduto(categoriaProdutoDTO.getNomeCategoriaProduto());
+            categoriaProdutoExistente.setCodigoCategoriaProduto(categoriaProdutoDTO.getCodigoCategoriaProduto());
+            categoriaProdutoExistente.setFornecedor(categoriaProdutoDTO.getFornecedor());
 
             categoriaProdutoExistente = this.iCategoriaProdutoRepository.save(categoriaProdutoExistente);
 

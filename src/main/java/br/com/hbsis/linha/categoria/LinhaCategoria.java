@@ -26,7 +26,7 @@ public class LinhaCategoria {
     @Column(name= "nome_linha_categoria")
     String nomeLinhaCategoria;
 
-    public Long getIdLinhasCategorias() {
+    public Long getIdLinhaCategoria() {
         return idLinhaCategoria;
     }
 
