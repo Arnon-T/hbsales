@@ -2,6 +2,7 @@ package br.com.hbsis.fornecedor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -14,10 +15,10 @@ public class FornecedorService {
 
     private final IFornecedorRepository iFornecedorRepository;
 
+    @Autowired
     public FornecedorService(IFornecedorRepository iFornecedorRepository) {
         this.iFornecedorRepository = iFornecedorRepository;
     }
-
 
     public FornecedorDTO save(FornecedorDTO fornecedorDTO){
 
@@ -66,6 +67,15 @@ public class FornecedorService {
             throw new IllegalArgumentException("Email não deve ser nulo/vazio");
         }
 
+    }
+
+    public Fornecedor findFornecedorEntityById(Long id){
+
+        Optional<Fornecedor> fornecedor = this.iFornecedorRepository.findById(id);
+        if(fornecedor.isPresent()){
+            return fornecedor.get();
+        }
+        throw new IllegalArgumentException(String.format("Fornecedor ID %s não existe.", id));
     }
 
     public FornecedorDTO findById(Long id){
