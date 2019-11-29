@@ -2,8 +2,6 @@ package br.com.hbsis.categoria.produto;
 
 import br.com.hbsis.fornecedor.Fornecedor;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.opencsv.bean.CsvBindAndJoinByPosition;
-import com.opencsv.bean.CsvBindByName;
 
 import javax.persistence.*;
 
@@ -31,7 +29,11 @@ public class CategoriaProduto {
     @ManyToOne
     @JoinColumn(name = "id_fornecedor_categoria_produto", referencedColumnName = "id_fornecedor")
     @JsonDeserialize
-    private Long fornecedorId;
+    private Fornecedor fornecedor;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getId() {
         return id;
@@ -53,12 +55,12 @@ public class CategoriaProduto {
         this.nomeCategoriaProduto = nomeCategoriaProduto;
     }
 
-    public Long getFornecedorId() {
-        return fornecedorId;
+    public Fornecedor getFornecedor() {
+        return fornecedor;
     }
 
-    public void setFornecedorId(Long fornecedorId) {
-        this.fornecedorId = fornecedorId;
+    public void setFornecedor(Fornecedor fornecedor) {
+        this.fornecedor = fornecedor;
     }
 
     @Override
@@ -67,7 +69,7 @@ public class CategoriaProduto {
                 "id=" + id +
                 ", codigoCategoriaProduto=" + codigoCategoriaProduto +
                 ", nomeCategoriaProduto='" + nomeCategoriaProduto + '\'' +
-                ", fornecedor=" + fornecedorId +
+                ", fornecedor=" + fornecedor.toString() +
                 '}';
     }
 }
