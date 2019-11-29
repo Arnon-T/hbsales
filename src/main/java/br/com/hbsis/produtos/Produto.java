@@ -1,6 +1,8 @@
 package br.com.hbsis.produtos;
 
 import br.com.hbsis.linha.categoria.LinhaCategoria;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -34,15 +36,18 @@ public class Produto {
     @JoinColumn(name = "id_linha_categoria", referencedColumnName = "id_linha_categoria")
     LinhaCategoria linhaCategoria;
     @Column(name = "unidades_caixa")
-    int unidadesCaixa;
+    Double unidadesCaixa;
     @Column(name = "peso_unidade")
     Double pesoUnidade;
-    @Column(name = "dataValidade")
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
-    LocalDate dataValidade;
+    @Column(name = "data_validade")
+    String dataValidade;
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getCodigoProduto() {
@@ -77,11 +82,11 @@ public class Produto {
         this.linhaCategoria = linhaCategoria;
     }
 
-    public int getUnidadesCaixa() {
+    public Double getUnidadesCaixa() {
         return unidadesCaixa;
     }
 
-    public void setUnidadesCaixa(int unidadesCaixa) {
+    public void setUnidadesCaixa(Double unidadesCaixa) {
         this.unidadesCaixa = unidadesCaixa;
     }
 
@@ -93,11 +98,11 @@ public class Produto {
         this.pesoUnidade = pesoUnidade;
     }
 
-    public LocalDate getDataValidade() {
+    public String getDataValidade() {
         return dataValidade;
     }
 
-    public void setDataValidade(LocalDate dataValidade) {
+    public void setDataValidade(String dataValidade) {
         this.dataValidade = dataValidade;
     }
 

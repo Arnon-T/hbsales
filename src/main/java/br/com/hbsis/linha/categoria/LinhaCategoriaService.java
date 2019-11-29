@@ -90,10 +90,6 @@ public class LinhaCategoriaService {
         return iLinhaCategoriaRepository.saveAll(resultadoLeitura);
     }
 
-    public List<LinhaCategoria> saveAll(List<LinhaCategoria> linhaCategoria) {
-        return iLinhaCategoriaRepository.saveAll(linhaCategoria);
-    }
-
     public LinhaCategoriaDTO save(LinhaCategoriaDTO linhaCategoriaDTO) {
 
         LOGGER.debug("Linha Categoria: {}", linhaCategoriaDTO);
