@@ -2,54 +2,58 @@ package br.com.hbsis.categoria.produto;
 
 import br.com.hbsis.fornecedor.Fornecedor;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.opencsv.bean.CsvBindAndJoinByPosition;
-import com.opencsv.bean.CsvBindByName;
 
 import javax.persistence.*;
 
 
 @Entity
-@Table(name= "seg_categorias_produtos")
+@Table(name = "seg_categorias_produtos")
 
 public class CategoriaProduto {
-/*
- A1. O Cadastro deve conter:
-A) Nome da categoria
-B) Fornecedor da categoria
-*/
+    /*
+     A1. O Cadastro deve conter:
+    A) Nome da categoria
+    B) Fornecedor da categoria
+    */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_categoria_produto")
-    //@CsvBindByName(column = "codigo_categoria_produto")
     private Long id;
 
     @Column(name = "codigo_categoria_produto", unique = true, nullable = false)
-    //@CsvBindByName(column = "codigo_categoria_produto")
     private Long codigoCategoriaProduto;
 
     @Column(name = "nome_categoria_produto", unique = false, nullable = false, length = 100)
-    //@CsvBindByName(column = "nome_categoria_produto")
     private String nomeCategoriaProduto;
 
     @ManyToOne
     @JoinColumn(name = "id_fornecedor_categoria_produto", referencedColumnName = "id_fornecedor")
     @JsonDeserialize
-    //@CsvBindByName(column = "id_fornecedor_categoria_produto")
     private Fornecedor fornecedor;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getId() {
         return id;
     }
 
-    public Long getCodigoCategoriaProduto() { return codigoCategoriaProduto; }
+    public Long getCodigoCategoriaProduto() {
+        return codigoCategoriaProduto;
+    }
 
-    public void setCodigoCategoriaProduto(Long codigoCategoriaProduto) { this.codigoCategoriaProduto = codigoCategoriaProduto; }
+    public void setCodigoCategoriaProduto(Long codigoCategoriaProduto) {
+        this.codigoCategoriaProduto = codigoCategoriaProduto;
+    }
 
     public String getNomeCategoriaProduto() {
         return nomeCategoriaProduto;
     }
 
-    public void setNomeCategoriaProduto(String nomeCategoriaProduto) { this.nomeCategoriaProduto = nomeCategoriaProduto; }
+    public void setNomeCategoriaProduto(String nomeCategoriaProduto) {
+        this.nomeCategoriaProduto = nomeCategoriaProduto;
+    }
 
     public Fornecedor getFornecedor() {
         return fornecedor;
@@ -65,7 +69,7 @@ B) Fornecedor da categoria
                 "id=" + id +
                 ", codigoCategoriaProduto=" + codigoCategoriaProduto +
                 ", nomeCategoriaProduto='" + nomeCategoriaProduto + '\'' +
-                ", fornecedor=" + fornecedor +
+                ", fornecedor=" + fornecedor.toString() +
                 '}';
     }
 }
