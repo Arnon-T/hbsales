@@ -24,8 +24,24 @@ public class PeriodoVendaRest {
     @PostMapping
     public PeriodoVendaDTO save(@RequestBody PeriodoVendaDTO periodoVendaDTO){
 
-        periodoVendaService.save(periodoVendaDTO);
+       return periodoVendaService.save(periodoVendaDTO);
     }
 
+    @PutMapping("/{id}")
+    public PeriodoVendaDTO update(@PathVariable("id") Long id, @RequestBody PeriodoVendaDTO periodoVendaDTO){
+        return this.periodoVendaService.update(periodoVendaDTO, id);
+    }
+
+    @GetMapping("/{id}")
+    public PeriodoVendaDTO findById(@PathVariable("id") Long id){
+        LOGGER.info("Procurando periodo de vendas de ID: [{}]", id);
+
+        return this.periodoVendaService.findById(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable("id") Long id){
+        this.periodoVendaService.delete(id);
+    }
 
 }

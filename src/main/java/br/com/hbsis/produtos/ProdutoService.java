@@ -5,6 +5,7 @@ import br.com.hbsis.linha.categoria.ILinhaCategoriaRepository;
 import br.com.hbsis.linha.categoria.LinhaCategoria;
 import com.google.common.net.HttpHeaders;
 import com.opencsv.*;
+import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -35,10 +36,6 @@ public class ProdutoService {
         this.iFornecedorRepository = iFornecedorRepository;
     }
 
-    public List<Produto> findaAll() {
-        return this.iProdutoRepository.findAll();
-    }
-
     public void exportCSV(HttpServletResponse response) {
         try {
             String nomearquivo = "produtos.csv";
@@ -66,7 +63,7 @@ public class ProdutoService {
                         produto.getLinhaCategoria().getIdLinhaCategoria().toString(),
                         produto.getUnidadesCaixa().toString(),
                         produto.getPesoUnidade().toString(),
-                        produto.getDataValidade()
+                        produto.getDataValidade().toString()
                 });
             }
         } catch (Exception e) {
@@ -98,7 +95,7 @@ public class ProdutoService {
                 produto.setLinhaCategoria(iLinhaCategoriaRepository.findById(Long.parseLong(bean[4])).get());
                 produto.setUnidadesCaixa(Double.parseDouble(bean[5]));
                 produto.setPesoUnidade(Double.parseDouble(bean[6]));
-                produto.setDataValidade(bean[7]);
+                produto.setDataValidade(LocalDate.parse(bean[7]));
 
                 resultadoLeitura.add(produto);
             }  catch (Exception e){
@@ -131,7 +128,7 @@ public class ProdutoService {
                     produto.setLinhaCategoria(iLinhaCategoriaRepository.findById(Long.parseLong(bean[4])).get());
                     produto.setUnidadesCaixa(Double.parseDouble(bean[5]));
                     produto.setPesoUnidade(Double.parseDouble(bean[6]));
-                    produto.setDataValidade(bean[7]);
+                    produto.setDataValidade(LocalDate.parse(bean[7]));
 
                     if (iProdutoRepository.existsByCodigoProduto(produto.getCodigoProduto()) &&
                             id == produto.getLinhaCategoria().getCategoriaProduto().getFornecedor().getId()){

@@ -12,7 +12,8 @@ public class PeriodoVenda {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @Column(name = "id_fornecedor")
+    @ManyToOne
+    @JoinColumn(name = "id_fornecedor", referencedColumnName = "id_fornecedor")
     Fornecedor fornecedor;
     @Column(name = "data_inicio")
     LocalDate dataInicio;
@@ -23,6 +24,10 @@ public class PeriodoVenda {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Fornecedor getFornecedor() {

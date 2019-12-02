@@ -10,9 +10,9 @@ public class ProdutoDTO {
     private Long linhaCategoriaId;
     private Double unidadesCaixa;
     private Double pesoUnidade;
-    private String dataValidade;
+    private LocalDate dataValidade;
 
-    public ProdutoDTO(Long id, Long codigoProduto, String nomeProduto, Double precoProduto, Long linhaCategoriaId, Double unidadesCaixa, Double pesoUnidade, String dataValidade) {
+    public ProdutoDTO(Long id, Long codigoProduto, String nomeProduto, Double precoProduto, Long linhaCategoriaId, Double unidadesCaixa, Double pesoUnidade, LocalDate dataValidade) {
         this.id = id;
         this.codigoProduto = codigoProduto;
         this.nomeProduto = nomeProduto;
@@ -88,11 +88,11 @@ public class ProdutoDTO {
         this.pesoUnidade = pesoUnidade;
     }
 
-    public String getDataValidade() {
+    public LocalDate getDataValidade() {
         return dataValidade;
     }
 
-    public void setDataValidade(String dataValidade) {
+    public void setDataValidade(LocalDate dataValidade) {
         this.dataValidade = dataValidade;
     }
 

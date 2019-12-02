@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PeriodoVendaService {
 
@@ -30,7 +32,7 @@ public class PeriodoVendaService {
         periodoVenda.setFornecedor(iFornecedorRepository.findById(periodoVendaDTO.fornecedorId).get());
         periodoVenda.setDataInicio(periodoVendaDTO.getDataInicio());
         periodoVenda.setDataFim(periodoVendaDTO.getDataFim());
-        periodoVenda.setDataRetirada(periodoVenda.getDataRetirada());
+        periodoVenda.setDataRetirada(periodoVendaDTO.getDataRetirada());
 
         this.iPeriodoVendaRepository.save(periodoVenda);
 
@@ -43,6 +45,46 @@ public class PeriodoVendaService {
         if(periodoVendaDTO == null){
             throw new IllegalArgumentException("Periodo Venda não pode ser nulo.");
         }
+    }
+
+    public PeriodoVendaDTO update(PeriodoVendaDTO periodoVendaDTO, Long id){
+
+        Optional<PeriodoVenda> periodoVendaOptional = this.iPeriodoVendaRepository.findById(id);
+
+        if(periodoVendaOptional.isPresent()){
+            PeriodoVenda periodoVendaExistente = periodoVendaOptional.get();
+
+            LOGGER.info("Atualizando Periodo Venda do Fornecedor...[{}]", periodoVendaOptional.get().fornecedor.getId());
+            LOGGER.debug("Payload... [{}]", periodoVendaDTO);
+            LOGGER.debug("Periodo existente... [{}]", periodoVendaExistente);
+
+            periodoVendaExistente.setId(periodoVendaDTO.getId());
+            periodoVendaExistente.setFornecedor(iFornecedorRepository.findById(periodoVendaOptional.get().getFornecedor().getId()).get());
+            periodoVendaExistente.setDataInicio(periodoVendaDTO.getDataInicio());
+            periodoVendaExistente.setDataFim(periodoVendaDTO.getDataFim());
+            periodoVendaExistente.setDataRetirada(periodoVendaDTO.getDataRetirada());
+
+            this.iPeriodoVendaRepository.save(periodoVendaExistente);
+
+            return PeriodoVendaDTO.of(periodoVendaExistente);
+        }
+      throw new IllegalArgumentException(String.format("Não foi possível atualizar o período de venda do fornecedor {}.", id));
+    }
+
+    public PeriodoVendaDTO findById(Long id){
+        Optional<PeriodoVenda> periodoVendaOptional = this.iPeriodoVendaRepository.findById(id);
+
+        if(periodoVendaOptional.isPresent()){
+            return PeriodoVendaDTO.of(periodoVendaOptional.get());
+        }
+        throw new  IllegalArgumentException(String.format("Periodo de vendas de ID {} não encontrado.", id));
+    }
+
+    public void delete(Long id){
+
+        LOGGER.info("Excluindo periodo de vendas de ID: [{}]", id);
+
+        this.iPeriodoVendaRepository.deleteById(id);
     }
 
 }

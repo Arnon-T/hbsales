@@ -40,7 +40,7 @@ public class Produto {
     @Column(name = "peso_unidade")
     Double pesoUnidade;
     @Column(name = "data_validade")
-    String dataValidade;
+    LocalDate dataValidade;
 
     public Long getId() {
         return id;
@@ -98,11 +98,11 @@ public class Produto {
         this.pesoUnidade = pesoUnidade;
     }
 
-    public String getDataValidade() {
+    public LocalDate getDataValidade() {
         return dataValidade;
     }
 
-    public void setDataValidade(String dataValidade) {
+    public void setDataValidade(LocalDate dataValidade) {
         this.dataValidade = dataValidade;
     }
 
