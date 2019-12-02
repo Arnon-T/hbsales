@@ -133,14 +133,20 @@ public class ProdutoService {
                     produto.setPesoUnidade(Double.parseDouble(bean[6]));
                     produto.setDataValidade(bean[7]);
 
-                    if (iProdutoRepository.existsByCodigoProduto(produto.getCodigoProduto())){
+                    if (iProdutoRepository.existsByCodigoProduto(produto.getCodigoProduto()) &&
+                            id == produto.getLinhaCategoria().getCategoriaProduto().getFornecedor().getId()){
 
                         produto.setId(iProdutoRepository.findByCodigoProduto(produto.getCodigoProduto()).get().getId());
                         update(ProdutoDTO.of(produto), produto.getId());
 
                     }
-                    else {
+                    else if(id == produto.getLinhaCategoria().getCategoriaProduto().getFornecedor().getId()) {
                         iProdutoRepository.save(produto);
+                    }
+                    else {
+
+                        LOGGER.info("Produto {} ... pertence a outro fornecedor.", produto.getCodigoProduto());
+
                     }
                 }
             }  catch (Exception e){
