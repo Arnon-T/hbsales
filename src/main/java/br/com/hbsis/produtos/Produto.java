@@ -113,10 +113,10 @@ public class Produto {
                 ", codigoProduto=" + codigoProduto +
                 ", nomeProduto='" + nomeProduto + '\'' +
                 ", precoProduto=" + precoProduto +
-                ", linhaCategoria=" + linhaCategoria +
+                ", linhaCategoria=" + linhaCategoria.toString() +
                 ", unidadesCaixa=" + unidadesCaixa +
                 ", pesoUnidade=" + pesoUnidade +
-                ", dataValidade=" + dataValidade +
+                ", dataValidade='" + dataValidade + '\'' +
                 '}';
     }
 }
