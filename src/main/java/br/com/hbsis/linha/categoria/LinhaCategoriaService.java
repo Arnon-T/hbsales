@@ -37,10 +37,10 @@ public class LinhaCategoriaService {
 
     public void exportCSV(HttpServletResponse response) throws Exception{
         try {
-            String nomearquivo = "linhas.csv";
+            String fileName = "linhas.csv";
             response.setContentType("text/csv");
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-                    "attachment; nomearquivo=\"" + nomearquivo + "\"");
+                    "attachment; fileName=\"" + fileName + "\"");
 
             PrintWriter writer = response.getWriter();
 
@@ -56,8 +56,14 @@ public class LinhaCategoriaService {
             for (LinhaCategoria linha : iLinhaCategoriaRepository.findAll()) {
                 csvWriter.writeNext(new String[] {linha.getIdLinhaCategoria().toString(), linha.getCategoriaProduto().getId().toString(), linha.getNomeLinhaCategoria()});
             }
+
+            csvWriter.flush();
+            csvWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        finally {
+
         }
     }
 

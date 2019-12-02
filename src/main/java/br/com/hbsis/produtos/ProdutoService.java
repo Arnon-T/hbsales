@@ -62,7 +62,8 @@ public class ProdutoService {
                         produto.getPrecoProduto().toString(),
                         produto.getLinhaCategoria().getIdLinhaCategoria().toString(),
                         produto.getUnidadesCaixa().toString(),
-                        produto.getDataValidade().toString()
+                        produto.getPesoUnidade().toString(),
+                        produto.getDataValidade()
                 });
             }
         } catch (IOException e) {
@@ -87,7 +88,7 @@ public class ProdutoService {
 
                 Produto produto = new Produto();
 
-                produto.setId(Long.parseLong(bean[0]));
+                //produto.setId(Long.parseLong(bean[0]));
                 produto.setCodigoProduto(Long.parseLong(bean[1]));
                 produto.setNomeProduto(bean[2]);
                 produto.setPrecoProduto(Double.parseDouble(bean[3]));
