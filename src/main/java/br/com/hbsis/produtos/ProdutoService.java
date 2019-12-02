@@ -1,5 +1,6 @@
 package br.com.hbsis.produtos;
 
+import br.com.hbsis.fornecedor.IFornecedorRepository;
 import br.com.hbsis.linha.categoria.ILinhaCategoriaRepository;
 import br.com.hbsis.linha.categoria.LinhaCategoria;
 import com.google.common.net.HttpHeaders;
@@ -26,17 +27,19 @@ public class ProdutoService {
 
     private final IProdutoRepository iProdutoRepository;
     private final ILinhaCategoriaRepository iLinhaCategoriaRepository;
+    private final IFornecedorRepository iFornecedorRepository;
 
-    public ProdutoService(IProdutoRepository iProdutoRepository, ILinhaCategoriaRepository iLinhaCategoriaRepository) {
+    public ProdutoService(IProdutoRepository iProdutoRepository, ILinhaCategoriaRepository iLinhaCategoriaRepository, IFornecedorRepository iFornecedorRepository) {
         this.iProdutoRepository = iProdutoRepository;
         this.iLinhaCategoriaRepository = iLinhaCategoriaRepository;
+        this.iFornecedorRepository = iFornecedorRepository;
     }
 
     public List<Produto> findaAll() {
         return this.iProdutoRepository.findAll();
     }
 
-    public void exportCSV(HttpServletResponse response) throws Exception {
+    public void exportCSV(HttpServletResponse response) {
         try {
             String nomearquivo = "produtos.csv";
             response.setContentType("text/csv");
@@ -66,7 +69,7 @@ public class ProdutoService {
                         produto.getDataValidade()
                 });
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -103,6 +106,47 @@ public class ProdutoService {
             }
         }
         return iProdutoRepository.saveAll(resultadoLeitura);
+    }
+
+    public void importProdutoFornecedor(Long id, MultipartFile file) throws Exception{
+        InputStreamReader inputStreamReader = new InputStreamReader(file.getInputStream());
+
+        CSVReader csvReader = new CSVReaderBuilder(inputStreamReader)
+                .withSkipLines(1)
+                .build();
+
+        List<String[]> linhaString = csvReader.readAll();
+
+        List<Produto> resultadoLeitura = new ArrayList<>();
+
+        for (String[] linha : linhaString) {
+            try{
+                String[] bean = linha[0].replaceAll("\"", "").split(";");
+
+                Produto produto = new Produto();
+                if(iFornecedorRepository.existsById(id)){
+                    produto.setCodigoProduto(Long.parseLong(bean[1]));
+                    produto.setNomeProduto(bean[2]);
+                    produto.setPrecoProduto(Double.parseDouble(bean[3]));
+                    produto.setLinhaCategoria(iLinhaCategoriaRepository.findById(Long.parseLong(bean[4])).get());
+                    produto.setUnidadesCaixa(Double.parseDouble(bean[5]));
+                    produto.setPesoUnidade(Double.parseDouble(bean[6]));
+                    produto.setDataValidade(bean[7]);
+
+                    if (iProdutoRepository.existsByCodigoProduto(produto.getCodigoProduto())){
+
+                        produto.setId(iProdutoRepository.findByCodigoProduto(produto.getCodigoProduto()).get().getId());
+                        update(ProdutoDTO.of(produto), produto.getId());
+
+                    }
+                    else {
+                        iProdutoRepository.save(produto);
+                    }
+                }
+            }  catch (Exception e){
+                e.printStackTrace();
+            }
+        }
     }
 
     public ProdutoDTO save (ProdutoDTO produtoDTO){

@@ -1,5 +1,6 @@
 package br.com.hbsis.produtos;
 
+import com.sun.org.apache.xpath.internal.operations.Mult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,14 @@ public class ProdutoRest{
 
         produtoService.readAll(file);
 
+    }
+
+    @PutMapping("/import-produtos-fornecedor/{id}")
+    public void importProdutoFornecedor(@PathVariable("id") Long id, @RequestParam MultipartFile file) throws Exception{
+
+        LOGGER.info("Adicionando Produtos do Fornecedor de ID... [{}]", id);
+
+        produtoService.importProdutoFornecedor(id, file);
     }
 
     @GetMapping("/{id}")

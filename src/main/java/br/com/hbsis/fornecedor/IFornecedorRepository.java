@@ -14,4 +14,6 @@ public interface IFornecedorRepository extends JpaRepository<Fornecedor, Long> {
 
     List<Fornecedor> findByNomeFantasia(String nome);
 
+    @Override
+    boolean existsById(Long id);
 }
