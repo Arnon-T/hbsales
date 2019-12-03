@@ -23,16 +23,13 @@ public class CategoriaProdutoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoriaProdutoService.class);
 
-    private final ICategoriaProdutoRepository iCategoriaProdutoRepository;
     private final IFornecedorRepository iFornecedorRepository;
+
+    private final ICategoriaProdutoRepository iCategoriaProdutoRepository;
 
     public CategoriaProdutoService(ICategoriaProdutoRepository iCategoriaProdutoRepository, IFornecedorRepository iFornecedorRepository) {
         this.iCategoriaProdutoRepository = iCategoriaProdutoRepository;
         this.iFornecedorRepository = iFornecedorRepository;
-    }
-
-    public List<CategoriaProduto> findAll() {
-        return iCategoriaProdutoRepository.findAll();
     }
 
     public List<CategoriaProduto> readAll(MultipartFile file) throws Exception {
@@ -67,7 +64,7 @@ public class CategoriaProdutoService {
         return iCategoriaProdutoRepository.saveAll(resultadoLeitura);
     }
 
-    public void exportCSV(HttpServletResponse response) throws Exception {
+    public void exportCSV(HttpServletResponse response)  {
         try {
             String nomearquivo = "categorias.csv";
             response.setContentType("text/csv");
@@ -93,11 +90,6 @@ public class CategoriaProdutoService {
         }
 
 
-    }
-
-    public List<CategoriaProduto> saveAll(List<CategoriaProduto> categoriaProdutos) throws Exception {
-
-        return iCategoriaProdutoRepository.saveAll(categoriaProdutos);
     }
 
     public CategoriaProdutoDTO save(CategoriaProdutoDTO categoriaProdutoDTO) {

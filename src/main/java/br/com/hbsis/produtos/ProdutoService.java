@@ -2,17 +2,14 @@ package br.com.hbsis.produtos;
 
 import br.com.hbsis.fornecedor.IFornecedorRepository;
 import br.com.hbsis.linha.categoria.ILinhaCategoriaRepository;
-import br.com.hbsis.linha.categoria.LinhaCategoria;
 import com.google.common.net.HttpHeaders;
 import com.opencsv.*;
-import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.time.LocalDate;

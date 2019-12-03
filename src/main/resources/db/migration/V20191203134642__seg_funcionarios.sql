@@ -1,0 +1,5 @@
+CREATE TABLE seg_funcionarios(
+    id BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    nome VARCHAR (100) NOT NULL,
+    email VARCHAR (100) NOT NULL
+);
