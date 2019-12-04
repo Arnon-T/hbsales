@@ -1,12 +1,7 @@
 package br.com.hbsis.pedido;
 
-import br.com.hbsis.categoria.produto.CategoriaProdutoService;
-import br.com.hbsis.fornecedor.FornecedorService;
 import br.com.hbsis.funcionario.FuncionarioService;
-import br.com.hbsis.item.pedido.IPedidoItemRepository;
 import br.com.hbsis.item.pedido.PedidoItemService;
-import br.com.hbsis.periodo.venda.PeriodoVendaService;
-import br.com.hbsis.produtos.ProdutoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,22 +16,11 @@ public class PedidoService {
 
     private final IPedidoRepository pedidoRepository;
     private final PedidoItemService pedidoItemService;
-    private final PeriodoVendaService periodoVendaService;
-    private final ProdutoService produtoService;
-    private final FornecedorService fornecedorService;
-    private final CategoriaProdutoService categoriaProdutoService;
-    private final IPedidoItemRepository iPedidoItemRepository;
     private final FuncionarioService funcionarioService;
 
-
-    public PedidoService(IPedidoRepository pedidoRepository, PedidoItemService pedidoItemService, PeriodoVendaService periodoVendaService, ProdutoService produtoService, FornecedorService fornecedorService, CategoriaProdutoService categoriaProdutoService, IPedidoItemRepository iPedidoItemRepository, FuncionarioService funcionarioService) {
+    public PedidoService(IPedidoRepository pedidoRepository, PedidoItemService pedidoItemService, FuncionarioService funcionarioService) {
         this.pedidoRepository = pedidoRepository;
         this.pedidoItemService = pedidoItemService;
-        this.periodoVendaService = periodoVendaService;
-        this.produtoService = produtoService;
-        this.fornecedorService = fornecedorService;
-        this.categoriaProdutoService = categoriaProdutoService;
-        this.iPedidoItemRepository = iPedidoItemRepository;
         this.funcionarioService = funcionarioService;
     }
 
@@ -57,8 +41,6 @@ public class PedidoService {
 
         return pedido;
     }
-
-
 
 
 //    save
