@@ -1,7 +1,5 @@
 package br.com.hbsis.periodo.venda;
 
-import org.apache.tomcat.jni.Local;
-
 import java.time.LocalDate;
 
 public class PeriodoVendaDTO {

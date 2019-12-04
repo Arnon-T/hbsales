@@ -1,10 +1,12 @@
 package br.com.hbsis.periodo.venda;
 
+import br.com.hbsis.fornecedor.FornecedorDTO;
 import br.com.hbsis.fornecedor.IFornecedorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -15,7 +17,7 @@ public class PeriodoVendaService {
     private final IPeriodoVendaRepository iPeriodoVendaRepository;
     private final IFornecedorRepository iFornecedorRepository;
 
-    public PeriodoVendaService(IPeriodoVendaRepository iPeriodoVendaRepository, IFornecedorRepository iFornecedorRepository){
+    public PeriodoVendaService(IPeriodoVendaRepository iPeriodoVendaRepository, IFornecedorRepository iFornecedorRepository) {
         this.iPeriodoVendaRepository = iPeriodoVendaRepository;
         this.iFornecedorRepository = iFornecedorRepository;
     }
@@ -86,5 +88,25 @@ public class PeriodoVendaService {
 
         this.iPeriodoVendaRepository.deleteById(id);
     }
+
+    public boolean periodoVendaAtivo(FornecedorDTO fornecedorDTO){
+        LocalDate diaHoje = LocalDate.now();
+
+        Optional<PeriodoVenda> periodoVendaOptional = this.iPeriodoVendaRepository.findByFornecedor_Id(fornecedorDTO.getId());
+
+        if(periodoVendaOptional.isPresent()){
+            PeriodoVenda periodoVenda = periodoVendaOptional.get();
+
+            if(diaHoje.compareTo(periodoVenda.getDataInicio()) >= 1  && diaHoje.compareTo(periodoVenda.getDataFim()) <= 0){
+                return true;
+            }
+            else{
+                return false;
+            }
+
+        }
+        throw new IllegalArgumentException(String.format("Não foi possível verificar o período de compras."));
+    }
+
 
 }

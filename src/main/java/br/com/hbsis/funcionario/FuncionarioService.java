@@ -1,7 +1,5 @@
 package br.com.hbsis.funcionario;
 
-import jdk.nashorn.internal.ir.Optimistic;
-import org.apache.logging.log4j.spi.LoggerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -64,6 +62,15 @@ public class FuncionarioService {
         throw new IllegalArgumentException(String.format("ID %s não localizado.", id));
 
     }
+    public Funcionario findByIdObjeto(Long id){
+        Optional<Funcionario> funcionarioOptional = this.iFuncionarioRepository.findById(id);
+
+        if(funcionarioOptional.isPresent()){
+            return funcionarioOptional.get();
+        }
+        throw new IllegalArgumentException(String.format("ID %s não localizado.", id));
+    }
+
 
 
 

@@ -30,7 +30,7 @@ public class FuncionarioRest {
     }
 
     @GetMapping("/{id}")
-    public FuncionarioDTO findById(@PathParam("id") Long id){
+    public FuncionarioDTO findById(@PathVariable("id") Long id){
 
         LOGGER.info("Buscando Funcionario de ID...[{}]", id);
 
@@ -38,7 +38,7 @@ public class FuncionarioRest {
     }
 
     @PutMapping("/{id}")
-    public FuncionarioDTO update(@PathParam("id") Long id, FuncionarioDTO funcionarioDTO){
+    public FuncionarioDTO update(@PathVariable("id") Long id, @RequestBody FuncionarioDTO funcionarioDTO){
 
         LOGGER.info("Atualizando funcionario com ID...[{}]", id);
         LOGGER.debug("Payload: {}", funcionarioDTO);
@@ -47,7 +47,7 @@ public class FuncionarioRest {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathParam("id") Long id){
+    public void delete(@PathVariable("id") Long id){
         LOGGER.info("Deletando por ID...{}", id);
 
         this.funcionarioService.delete(id);
