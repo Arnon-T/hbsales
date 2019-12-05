@@ -16,19 +16,19 @@ f.	E-mail de contato
 */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name= "id_fornecedor")
+    @Column(name= "id")
     private Long id;
-    @Column(name = "razao_social_fornecedor", unique = false, nullable = false, length = 100)
+    @Column(name = "razao_social", unique = false, nullable = false, length = 100)
     private String razaoSocial;
-    @Column(name = "cnpj_fornecedor" , unique = true, nullable = false, length = 20)
+    @Column(name = "cnpj" , unique = false, nullable = false, length = 14)
     private String cnpj;
-    @Column(name = "nome_fantasia_fornecedor", unique = true, nullable = false, length = 100)
+    @Column(name = "nome_fantasia", unique = true, nullable = false, length = 100)
     private String nomeFantasia;
-    @Column(name = "endereco_fornecedor", unique = false, nullable = false, length = 255)
+    @Column(name = "endereco", unique = false, nullable = false, length = 255)
     private String endereco;
-    @Column(name = "telefone_fornecedor", unique = false, nullable = false, length = 20)
+    @Column(name = "telefone", unique = false, nullable = false, length = 20)
     private int telefone;
-    @Column(name = "email_fornecedor", unique = false, nullable = false)
+    @Column(name = "email", unique = false, nullable = false)
     private String email;
 
     public void setId(Long id) {

@@ -11,12 +11,12 @@ public class PedidoItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @ManyToOne
     @JoinColumn(name = "id_pedido", referencedColumnName = "id")
     private Pedido pedido;
-    @ManyToMany
-    @JoinTable(name = "seg_pedidos_itens", joinColumns = @JoinColumn(name = "id_pedido"), inverseJoinColumns = @JoinColumn(name = "id_produto"))
+    @ManyToOne
+    @JoinColumn(name = "id_produto", referencedColumnName = "id")
     private Produto produto;
     @Column(name = "valor")
     private Double valorUnitario;

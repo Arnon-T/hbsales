@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PedidoService {
     /*
@@ -24,7 +26,7 @@ public class PedidoService {
         this.funcionarioService = funcionarioService;
     }
 
-    private Pedido save(PedidoDTO pedidoDTO) {
+    public PedidoDTO save(PedidoDTO pedidoDTO) {
 
         LOGGER.info("Salvando Pedido");
         LOGGER.debug("Payload: {}", pedidoDTO);
@@ -39,7 +41,17 @@ public class PedidoService {
 
         pedido = pedidoRepository.save(pedido);
 
-        return pedido;
+        return PedidoDTO.of(pedido);
+    }
+
+    public Pedido findByIdObjeto (Long id){
+
+        Optional<Pedido> pedidoOptional = pedidoRepository.findById(id);
+
+        if(pedidoOptional.isPresent()){
+            return pedidoOptional.get();
+        }
+        throw new IllegalArgumentException(String.format("ID %s não localizado.", id));
     }
 
 

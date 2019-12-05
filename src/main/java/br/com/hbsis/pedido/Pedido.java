@@ -13,13 +13,14 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "id_funcionario")
+    @ManyToOne
+    @JoinColumn(name = "id_funcionario", referencedColumnName = "id")
     private Funcionario funcionario;
     @Column(name = "valor_total")
     private Double valorTotal;
     @Column(name = "data")
     private LocalDate data;
-    @OneToMany(mappedBy = "pedido")
+    @OneToMany
     List<PedidoItem> pedidoItemList;
 
     public Long getId() {

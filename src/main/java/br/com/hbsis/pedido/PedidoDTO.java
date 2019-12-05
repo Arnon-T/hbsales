@@ -1,6 +1,7 @@
 package br.com.hbsis.pedido;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PedidoDTO {
@@ -13,20 +14,25 @@ public class PedidoDTO {
     public PedidoDTO() {
     }
 
-    public PedidoDTO(Long id, Long funcionarioId, Double valorTotal, LocalDate data) {
+    public PedidoDTO(Long id, Long funcionarioId, Double valorTotal, LocalDate data, List<Long> pedidoItemIdList) {
         this.id = id;
         this.funcionarioId = funcionarioId;
         this.valorTotal = valorTotal;
         this.data = data;
+        this.pedidoItemIdList = pedidoItemIdList;
     }
 
     public static PedidoDTO of(Pedido pedido){
+
+        List<Long> pedidoItemId = new ArrayList<>();
+        pedido.getPedidoItemList().forEach((i) -> pedidoItemId.add(i.getId()));
+
         return new PedidoDTO(
                 pedido.getId(),
                 pedido.getFuncionario().getId(),
                 pedido.getValorTotal(),
-                // VERIFICAR ESSA LINHA pedido.getPedidoItemList().get().getId(),
-                pedido.getData()
+                pedido.getData(),
+                pedidoItemId
         );
     }
 

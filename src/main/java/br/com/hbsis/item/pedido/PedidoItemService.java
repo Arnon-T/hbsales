@@ -57,6 +57,7 @@ public class PedidoItemService {
 
         for (PedidoItem pedidoItem : pedidoItemList) {
             if(periodoVendaService.periodoVendaAtivo(fornecedorService.findById(pedidoItem.getProduto().getLinhaCategoria().getCategoriaProduto().getFornecedor().getId()))) {
+                pedidoItem.setValorUnitario(pedidoItem.getProduto().getPrecoProduto());
                 itemValidado.add(pedidoItem);
             }
             else{

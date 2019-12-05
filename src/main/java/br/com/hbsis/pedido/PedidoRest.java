@@ -13,11 +13,9 @@ public class PedidoRest {
     private static final Logger LOGGER = LoggerFactory.getLogger(PedidoRest.class);
 
     private final PedidoService pedidoService;
-    private final PedidoItemService pedidoItemService;
 
-    public PedidoRest(PedidoService pedidoService, PedidoItemService pedidoItemService) {
+    public PedidoRest(PedidoService pedidoService) {
         this.pedidoService = pedidoService;
-        this.pedidoItemService = pedidoItemService;
     }
 
     @GetMapping("/{id}")
@@ -25,11 +23,11 @@ public class PedidoRest {
 
         LOGGER.info("Buscando Pedido de ID: [{}]", id);
 
-        return this.pedidoService.findByID(id);
+        return PedidoDTO.of(this.pedidoService.findByIdObjeto(id));
     }
 
     @PostMapping
-    public PedidoDTO save(PedidoDTO pedidoDTO){
+    public PedidoDTO save(@RequestBody PedidoDTO pedidoDTO){
 
         LOGGER.info("Salvando Pedido");
 
