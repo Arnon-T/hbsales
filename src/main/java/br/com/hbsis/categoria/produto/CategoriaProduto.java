@@ -27,7 +27,7 @@ public class CategoriaProduto {
     private String nomeCategoriaProduto;
 
     @ManyToOne
-    @JoinColumn(name = "id_fornecedor_categoria_produto", referencedColumnName = "id_fornecedor")
+    @JoinColumn(name = "id_fornecedor_categoria_produto", referencedColumnName = "id")
     @JsonDeserialize
     private Fornecedor fornecedor;
 

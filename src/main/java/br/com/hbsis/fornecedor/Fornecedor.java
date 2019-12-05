@@ -24,19 +24,19 @@ f.	E-mail de contato
     private String cnpj;
     @Column(name = "nome_fantasia", unique = true, nullable = false, length = 100)
     private String nomeFantasia;
-    @Column(name = "endereco", unique = false, nullable = false, length = 255)
+    @Column(name = "endereco", unique = false, nullable = false, length = 100)
     private String endereco;
-    @Column(name = "telefone", unique = false, nullable = false, length = 20)
-    private int telefone;
-    @Column(name = "email", unique = false, nullable = false)
+    @Column(name = "telefone", unique = false, nullable = false, length = 12)
+    private String telefone;
+    @Column(name = "email", unique = false, nullable = false, length = 50)
     private String email;
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getRazaoSocial() {
@@ -71,11 +71,11 @@ f.	E-mail de contato
         this.endereco = endereco;
     }
 
-    public int getTelefone() {
+    public String getTelefone() {
         return telefone;
     }
 
-    public void setTelefone(int telefone) {
+    public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 

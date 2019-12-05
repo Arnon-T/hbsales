@@ -20,7 +20,8 @@ public class Pedido {
     private Double valorTotal;
     @Column(name = "data")
     private LocalDate data;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_pedido")
     List<PedidoItem> pedidoItemList;
 
     public Long getId() {

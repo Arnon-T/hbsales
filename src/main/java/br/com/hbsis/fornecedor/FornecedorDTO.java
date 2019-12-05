@@ -7,13 +7,13 @@ public class FornecedorDTO {
     private String cnpj;
     private String nomeFantasia;
     private String endereco;
-    private int telefone;
+    private String telefone;
     private String email;
 
     public FornecedorDTO(){
     }
 
-    public FornecedorDTO(Long id, String razaoSocial, String cnpj, String nomeFantasia, String endereco, int telefone, String email) {
+    public FornecedorDTO(Long id, String razaoSocial, String cnpj, String nomeFantasia, String endereco, String telefone, String email) {
         this.id = id;
         this.razaoSocial = razaoSocial;
         this.cnpj = cnpj;
@@ -35,9 +35,12 @@ public class FornecedorDTO {
         );
     }
 
-
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getRazaoSocial() {
@@ -72,11 +75,11 @@ public class FornecedorDTO {
         this.endereco = endereco;
     }
 
-    public int getTelefone() {
+    public String getTelefone() {
         return telefone;
     }
 
-    public void setTelefone(int telefone) {
+    public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 
