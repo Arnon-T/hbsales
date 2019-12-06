@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @RestController
 @RequestMapping("/categoriaprodutos")
@@ -64,6 +65,14 @@ public class CategoriaProdutoRest {
         LOGGER.info("Recebendo Delete para Categoria Produtos de ID: {}", id);
 
         this.categoriaProdutoService.delete(id);
+    }
+
+    @GetMapping("/listar")
+    public List<CategoriaProdutoDTO> listar(){
+
+        LOGGER.info("Gerando lista de Categorias.");
+
+        return this.categoriaProdutoService.listar();
     }
 
 

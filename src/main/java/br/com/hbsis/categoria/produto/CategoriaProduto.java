@@ -32,6 +32,10 @@ public class CategoriaProduto {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getCodigoCategoriaProduto() {
         return codigoCategoriaProduto;
     }

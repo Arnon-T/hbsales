@@ -3,7 +3,6 @@ package br.com.hbsis.categoria.produto;
 import br.com.hbsis.fornecedor.Fornecedor;
 import br.com.hbsis.fornecedor.FornecedorDTO;
 import br.com.hbsis.fornecedor.FornecedorService;
-import br.com.hbsis.fornecedor.IFornecedorRepository;
 import com.google.common.net.HttpHeaders;
 import com.opencsv.*;
 import org.slf4j.Logger;
@@ -16,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,7 +66,7 @@ public class CategoriaProdutoService {
         return iCategoriaProdutoRepository.saveAll(resultadoLeitura);
     }
 
-    public void exportCSV(HttpServletResponse response)  {
+    public void exportCSV(HttpServletResponse response) {
         try {
             String nomearquivo = "categorias.csv";
             response.setContentType("text/csv");
@@ -81,13 +81,23 @@ public class CategoriaProdutoService {
                     .withLineEnd(CSVWriter.DEFAULT_LINE_END)
                     .build();
 
-            String headerCSV[] = {"id_categoria_produto", "codigo_categoria_produto", "nome_categoria_produto", "id_fornecedor"};
+            String headerCSV[] = {"codigo_categoria", "nome_categoria", "razao_social_fornecedor", "cnpj_fornecedor"};
             csvWriter.writeNext(headerCSV);
+            MaskFormatter mask = new MaskFormatter("###.###.###/####-##");
 
             for (CategoriaProduto linha : iCategoriaProdutoRepository.findAll()) {
-                csvWriter.writeNext(new String[]{linha.getId().toString(), linha.getCodigoCategoriaProduto().toString(), linha.getNomeCategoriaProduto(), linha.getFornecedor().getId().toString()});
+                String formatCNPJ = mask.valueToString(linha.getFornecedor().getCnpj());
+
+                csvWriter.writeNext(new String[]{
+                        linha.getId().toString(),
+                        linha.getCodigoCategoriaProduto(),
+                        linha.getNomeCategoriaProduto(),
+                        linha.getFornecedor().getRazaoSocial(),
+                        formatCNPJ
+                });
             }
-        } catch (IOException e) {
+
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
 
@@ -105,22 +115,21 @@ public class CategoriaProdutoService {
 
         categoriaProduto.setNomeCategoriaProduto(categoriaProdutoDTO.getNomeCategoriaProduto());
         categoriaProduto.setFornecedor(fornecedorService.fromDto(fornecedorService.findById(categoriaProdutoDTO.getFornecedorId()), new Fornecedor()));
-        categoriaProduto.setCodigoCategoriaProduto(construtorCodigo(categoriaProdutoDTO.getCodigoCategoriaProduto(), categoriaProduto.getFornecedor().getId()));
+        categoriaProduto.setCodigoCategoriaProduto(construtorCodigo(categoriaProdutoDTO.getCodigoCategoriaProduto(), categoriaProdutoDTO.getFornecedorId()));
 
         categoriaProduto = this.iCategoriaProdutoRepository.save(categoriaProduto);
 
         return CategoriaProdutoDTO.of(categoriaProduto);
     }
 
-
-    public String construtorCodigo(String codigoInformado, Long idFornecedor){
+    public String construtorCodigo(String codigoInformado, Long idFornecedor) {
         String codigoGerado = null;
         FornecedorDTO fornecedorDto = fornecedorService.findById(idFornecedor);
-        if(codigoInformado.length() < 3){
+        if (codigoInformado.length() < 3) {
             codigoInformado = String.format("%1$3s", codigoInformado);
             codigoInformado = codigoInformado.replaceAll(" ", "0");
         }
-        codigoGerado = "CAT" +  fornecedorDto.getCnpj().substring(10,14) + codigoInformado;
+        codigoGerado = "CAT" + fornecedorDto.getCnpj().substring(10, 14) + codigoInformado;
 
         return codigoGerado;
     }
@@ -170,7 +179,7 @@ public class CategoriaProdutoService {
 
             categoriaProdutoExistente.setNomeCategoriaProduto(categoriaProdutoDTO.getNomeCategoriaProduto());
             categoriaProdutoExistente.setFornecedor(fornecedorService.fromDto(fornecedorService.findById(categoriaProdutoDTO.getFornecedorId()), new Fornecedor()));
-            categoriaProdutoExistente.setCodigoCategoriaProduto(construtorCodigo(categoriaProdutoDTO.getCodigoCategoriaProduto(), categoriaProdutoExistente.getFornecedor().getId()));
+            categoriaProdutoExistente.setCodigoCategoriaProduto(construtorCodigo(categoriaProdutoDTO.getCodigoCategoriaProduto(), categoriaProdutoDTO.getFornecedorId()));
 
             categoriaProdutoExistente = this.iCategoriaProdutoRepository.save(categoriaProdutoExistente);
 
@@ -180,6 +189,25 @@ public class CategoriaProdutoService {
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
 
     }
+
+    public List<CategoriaProdutoDTO> listar() {
+
+        List<CategoriaProdutoDTO> categoriaProdutoDTOList = new ArrayList<>();
+
+        for (CategoriaProduto categoriaProduto : this.iCategoriaProdutoRepository.findAll()) {
+            CategoriaProdutoDTO categoriaProdutoDTO = new CategoriaProdutoDTO();
+
+            categoriaProdutoDTO.setId(categoriaProduto.getId());
+            categoriaProdutoDTO.setNomeCategoriaProduto(categoriaProduto.getNomeCategoriaProduto());
+            categoriaProdutoDTO.setCodigoCategoriaProduto(categoriaProduto.getCodigoCategoriaProduto());
+            categoriaProdutoDTO.setFornecedorId(categoriaProduto.getFornecedor().getId());
+
+            categoriaProdutoDTOList.add(categoriaProdutoDTO);
+        }
+
+        return categoriaProdutoDTOList;
+    }
+
 
     public void delete(Long id) {
         LOGGER.info("Executando delete para categoria produto de ID> [{}]", id);
