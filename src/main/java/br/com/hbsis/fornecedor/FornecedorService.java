@@ -1,7 +1,9 @@
 package br.com.hbsis.fornecedor;
 
+import br.com.hbsis.util.CnpjValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -14,10 +16,10 @@ public class FornecedorService {
 
     private final IFornecedorRepository iFornecedorRepository;
 
+    @Autowired
     public FornecedorService(IFornecedorRepository iFornecedorRepository) {
         this.iFornecedorRepository = iFornecedorRepository;
     }
-
 
     public FornecedorDTO save(FornecedorDTO fornecedorDTO){
 
@@ -76,6 +78,18 @@ public class FornecedorService {
         }
 
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
+    }
+
+    public static Fornecedor fromDto(FornecedorDTO fornecedorDTO, Fornecedor fornecedor){
+        fornecedor.setId(fornecedorDTO.getId());
+        fornecedor.setRazaoSocial(fornecedorDTO.getRazaoSocial());
+        fornecedor.setCnpj(fornecedorDTO.getCnpj());
+        fornecedor.setNomeFantasia(fornecedorDTO.getNomeFantasia());
+        fornecedor.setEndereco(fornecedorDTO.getEndereco());
+        fornecedor.setTelefone(fornecedorDTO.getTelefone());
+        fornecedor.setEmail(fornecedorDTO.getEmail());
+
+        return fornecedor;
     }
 
     public FornecedorDTO update(FornecedorDTO fornecedorDTO, Long id) {
