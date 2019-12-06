@@ -1,6 +1,7 @@
 package br.com.hbsis.fornecedor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 
 
 @Entity
@@ -29,6 +30,7 @@ f.	E-mail de contato
     @Column(name = "telefone", unique = false, nullable = false, length = 12)
     private String telefone;
     @Column(name = "email", unique = false, nullable = false, length = 50)
+    @Email
     private String email;
 
     public Long getId() {

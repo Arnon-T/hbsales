@@ -1,5 +1,7 @@
 package br.com.hbsis.categoria.produto;
 
+import br.com.hbsis.fornecedor.Fornecedor;
+import br.com.hbsis.fornecedor.FornecedorDTO;
 import br.com.hbsis.fornecedor.FornecedorService;
 import br.com.hbsis.fornecedor.IFornecedorRepository;
 import com.google.common.net.HttpHeaders;
@@ -23,13 +25,13 @@ public class CategoriaProdutoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoriaProdutoService.class);
 
-    private final IFornecedorRepository iFornecedorRepository;
-
     private final ICategoriaProdutoRepository iCategoriaProdutoRepository;
 
-    public CategoriaProdutoService(ICategoriaProdutoRepository iCategoriaProdutoRepository, IFornecedorRepository iFornecedorRepository) {
+    private final FornecedorService fornecedorService;
+
+    public CategoriaProdutoService(ICategoriaProdutoRepository iCategoriaProdutoRepository, FornecedorService fornecedorService) {
         this.iCategoriaProdutoRepository = iCategoriaProdutoRepository;
-        this.iFornecedorRepository = iFornecedorRepository;
+        this.fornecedorService = fornecedorService;
     }
 
     public List<CategoriaProduto> readAll(MultipartFile file) throws Exception {
@@ -52,9 +54,9 @@ public class CategoriaProdutoService {
 
                 CategoriaProduto categoriaProduto = new CategoriaProduto();
 
-                categoriaProduto.setCodigoCategoriaProduto(Long.parseLong(bean[1]));
+                categoriaProduto.setCodigoCategoriaProduto(bean[1]);
                 categoriaProduto.setNomeCategoriaProduto(bean[2]);
-                categoriaProduto.setFornecedor(iFornecedorRepository.findById(Long.parseLong(bean[3])).get());
+                categoriaProduto.setFornecedor(fornecedorService.fromDto(fornecedorService.findById(Long.parseLong(bean[3])), new Fornecedor()));
 
                 resultadoLeitura.add(categoriaProduto);
             } catch (Exception e) {
@@ -102,13 +104,25 @@ public class CategoriaProdutoService {
         CategoriaProduto categoriaProduto = new CategoriaProduto();
 
         categoriaProduto.setNomeCategoriaProduto(categoriaProdutoDTO.getNomeCategoriaProduto());
-        categoriaProduto.setCodigoCategoriaProduto(categoriaProdutoDTO.getCodigoCategoriaProduto());
-        categoriaProduto.setFornecedor(iFornecedorRepository.findById(categoriaProdutoDTO.getFornecedorId()).get());
+        categoriaProduto.setFornecedor(fornecedorService.fromDto(fornecedorService.findById(categoriaProdutoDTO.getFornecedorId()), new Fornecedor()));
+        categoriaProduto.setCodigoCategoriaProduto(construtorCodigo(categoriaProdutoDTO.getCodigoCategoriaProduto(), categoriaProduto.getFornecedor().getId()));
 
         categoriaProduto = this.iCategoriaProdutoRepository.save(categoriaProduto);
 
         return CategoriaProdutoDTO.of(categoriaProduto);
+    }
 
+
+    public String construtorCodigo(String codigoInformado, Long idFornecedor){
+        String codigoGerado = null;
+        FornecedorDTO fornecedorDto = fornecedorService.findById(idFornecedor);
+        if(codigoInformado.length() < 3){
+            codigoInformado = String.format("%1$3s", codigoInformado);
+            codigoInformado = codigoInformado.replaceAll(" ", "0");
+        }
+        codigoGerado = "CAT" +  fornecedorDto.getCnpj().substring(10,14) + codigoInformado;
+
+        return codigoGerado;
     }
 
     private void validate(CategoriaProdutoDTO categoriaProdutoDTO) {
@@ -123,6 +137,9 @@ public class CategoriaProdutoService {
         }
         if (StringUtils.isEmpty(categoriaProdutoDTO.getCodigoCategoriaProduto())) {
             throw new IllegalArgumentException("Codigo não deve ser nulo/vazio");
+        }
+        if (categoriaProdutoDTO.getCodigoCategoriaProduto().length() > 3) {
+            throw new IllegalArgumentException("Codigo informado não deve ser maior que 3 dígitos");
         }
         if (StringUtils.isEmpty(categoriaProdutoDTO.getFornecedorId())) {
             throw new IllegalArgumentException("ID Fornecedor não deve ser nulo/vazio");
@@ -151,10 +168,9 @@ public class CategoriaProdutoService {
             LOGGER.debug("Payload: {}", categoriaProdutoDTO);
             LOGGER.debug("Fornecedor Existente: {}", categoriaProdutoExistente);
 
-
             categoriaProdutoExistente.setNomeCategoriaProduto(categoriaProdutoDTO.getNomeCategoriaProduto());
-            categoriaProdutoExistente.setCodigoCategoriaProduto(categoriaProdutoDTO.getCodigoCategoriaProduto());
-            categoriaProdutoExistente.setFornecedor(iFornecedorRepository.findById(categoriaProdutoDTO.getFornecedorId()).get());
+            categoriaProdutoExistente.setFornecedor(fornecedorService.fromDto(fornecedorService.findById(categoriaProdutoDTO.getFornecedorId()), new Fornecedor()));
+            categoriaProdutoExistente.setCodigoCategoriaProduto(construtorCodigo(categoriaProdutoDTO.getCodigoCategoriaProduto(), categoriaProdutoExistente.getFornecedor().getId()));
 
             categoriaProdutoExistente = this.iCategoriaProdutoRepository.save(categoriaProdutoExistente);
 

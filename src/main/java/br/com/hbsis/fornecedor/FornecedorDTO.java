@@ -1,13 +1,19 @@
 package br.com.hbsis.fornecedor;
 
+import br.com.hbsis.util.CnpjValidation;
+
+import javax.validation.constraints.Email;
+
 public class FornecedorDTO {
 
     private Long id;
     private String razaoSocial;
+    @CnpjValidation(length = 14)
     private String cnpj;
     private String nomeFantasia;
     private String endereco;
     private String telefone;
+    @Email
     private String email;
 
     public FornecedorDTO(){

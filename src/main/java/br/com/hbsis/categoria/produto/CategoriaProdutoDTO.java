@@ -3,20 +3,19 @@ package br.com.hbsis.categoria.produto;
 public class CategoriaProdutoDTO {
     private Long id;
     private String nomeCategoriaProduto;
-    private Long codigoCategoriaProduto;
+    private String codigoCategoriaProduto;
     private Long fornecedorId;
 
 
     public CategoriaProdutoDTO() {
     }
 
-    public CategoriaProdutoDTO(Long id, String nomeCategoriaProduto, Long codigoCategoriaProduto, Long fornecedorId) {
+    public CategoriaProdutoDTO(Long id, String nomeCategoriaProduto, String codigoCategoriaProduto, Long fornecedorId) {
         this.id = id;
         this.nomeCategoriaProduto = nomeCategoriaProduto;
         this.codigoCategoriaProduto = codigoCategoriaProduto;
         this.fornecedorId = fornecedorId;
     }
-
 
     public static CategoriaProdutoDTO of(CategoriaProduto categoriaProduto) {
         return new CategoriaProdutoDTO(
@@ -25,10 +24,6 @@ public class CategoriaProdutoDTO {
                 categoriaProduto.getCodigoCategoriaProduto(),
                 categoriaProduto.getFornecedor().getId()
         );
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getId() {
@@ -43,6 +38,14 @@ public class CategoriaProdutoDTO {
         this.nomeCategoriaProduto = nomeCategoriaProduto;
     }
 
+    public String getCodigoCategoriaProduto() {
+        return codigoCategoriaProduto;
+    }
+
+    public void setCodigoCategoriaProduto(String codigoCategoriaProduto) {
+        this.codigoCategoriaProduto = codigoCategoriaProduto;
+    }
+
     public Long getFornecedorId() {
         return fornecedorId;
     }
@@ -50,10 +53,6 @@ public class CategoriaProdutoDTO {
     public void setFornecedorId(Long fornecedorId) {
         this.fornecedorId = fornecedorId;
     }
-
-    public Long getCodigoCategoriaProduto() { return codigoCategoriaProduto; }
-
-    public void setCodigoCategoriaProduto(Long codigoCategoriaProduto) { this.codigoCategoriaProduto = codigoCategoriaProduto; }
 
     @Override
     public String toString() {

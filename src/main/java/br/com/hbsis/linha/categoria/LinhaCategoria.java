@@ -14,7 +14,7 @@ public class LinhaCategoria {
     private Long idLinhaCategoria;
 
     @ManyToOne
-    @JoinColumn(name = "id_categoria_produto", referencedColumnName = "id_categoria_produto")
+    @JoinColumn(name = "id_categoria_produto", referencedColumnName = "id")
     CategoriaProduto categoriaProduto;
 
     @Column(name = "nome_linha_categoria")

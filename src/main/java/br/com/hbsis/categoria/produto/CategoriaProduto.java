@@ -1,14 +1,12 @@
 package br.com.hbsis.categoria.produto;
 
 import br.com.hbsis.fornecedor.Fornecedor;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import javax.persistence.*;
 
 
 @Entity
 @Table(name = "seg_categorias_produtos")
-
 public class CategoriaProduto {
     /*
      A1. O Cadastro deve conter:
@@ -17,33 +15,28 @@ public class CategoriaProduto {
     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_categoria_produto")
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "codigo_categoria_produto", unique = true, nullable = false)
-    private Long codigoCategoriaProduto;
+    @Column(name = "codigo", unique = true, nullable = false, length = 10)
+    private String codigoCategoriaProduto;
 
-    @Column(name = "nome_categoria_produto", unique = false, nullable = false, length = 100)
+    @Column(name = "nome", unique = false, nullable = false, length = 100)
     private String nomeCategoriaProduto;
 
     @ManyToOne
-    @JoinColumn(name = "id_fornecedor_categoria_produto", referencedColumnName = "id")
-    @JsonDeserialize
+    @JoinColumn(name = "id_fornecedor", referencedColumnName = "id")
     private Fornecedor fornecedor;
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Long getId() {
         return id;
     }
 
-    public Long getCodigoCategoriaProduto() {
+    public String getCodigoCategoriaProduto() {
         return codigoCategoriaProduto;
     }
 
-    public void setCodigoCategoriaProduto(Long codigoCategoriaProduto) {
+    public void setCodigoCategoriaProduto(String codigoCategoriaProduto) {
         this.codigoCategoriaProduto = codigoCategoriaProduto;
     }
 
