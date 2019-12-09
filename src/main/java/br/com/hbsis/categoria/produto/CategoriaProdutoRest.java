@@ -31,7 +31,7 @@ public class CategoriaProdutoRest {
     }
 
     @GetMapping("/export-csv-categorias")
-    public void exportCSV(HttpServletResponse response) throws Exception {
+    public void exportCSV(HttpServletResponse response) {
 
         LOGGER.info("Exportando arquivo 'categorias.csv'");
 

@@ -53,10 +53,10 @@ public class LinhaCategoriaService {
 
     public void exportCSV(HttpServletResponse response) {
         try {
-            String fileName = "linhas.csv";
+            String nomearquivo = "linhas.csv";
             response.setContentType("text/csv");
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-                    "attachment; fileName=\"" + fileName + "\"");
+                    "attachment; filename=\"" + nomearquivo + "\"");
 
             PrintWriter writer = response.getWriter();
 
@@ -66,19 +66,22 @@ public class LinhaCategoriaService {
                     .withLineEnd(CSVWriter.DEFAULT_LINE_END)
                     .build();
 
-            String headerCSV[] = {"id_linha_categoria", "id_categoria_produto", "nome_linha_categoria"};
+            String headerCSV[] = {"codigo", "nome", "codigo_categoria", "nome_categoria"};
             csvWriter.writeNext(headerCSV);
 
             for (LinhaCategoria linha : iLinhaCategoriaRepository.findAll()) {
-                csvWriter.writeNext(new String[]{linha.getIdLinhaCategoria().toString(), linha.getCategoriaProduto().getId().toString(), linha.getNomeLinhaCategoria()});
+                csvWriter.writeNext(new String[]{
+                        linha.getCodigoLinhaCategoria(),
+                        linha.getNomeLinhaCategoria(),
+                        linha.getCategoriaProduto().getCodigoCategoriaProduto(),
+                        linha.getCategoriaProduto().getNomeCategoriaProduto()
+                });
             }
 
-            csvWriter.flush();
-            csvWriter.close();
+//            csvWriter.flush();
+//            csvWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-
         }
     }
 

@@ -32,9 +32,9 @@ public class LinhaCategoriaRest {
     }
 
     @GetMapping("/export-csv-linhas")
-    public void exportCSV(HttpServletResponse response) throws Exception {
+    public void exportCSV(HttpServletResponse response) {
 
-        LOGGER.info("Exportando arquivo linhas.csv");
+        LOGGER.info("Exportando arquivo 'linhas.csv'");
 
         this.linhaCategoriaService.exportCSV(response);
     }
