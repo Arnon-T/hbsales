@@ -171,6 +171,10 @@ public class CategoriaProdutoService {
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
 
+    public CategoriaProduto findByCodigoCategoriaProduto(String codigoCategoriaProduto){
+        return this.iCategoriaProdutoRepository.findByCodigoCategoriaProduto(codigoCategoriaProduto);
+    }
+
     public CategoriaProdutoDTO update(CategoriaProdutoDTO categoriaProdutoDTO, Long id) {
 
         Optional<CategoriaProduto> categoriaProdutoExistenteOptional = this.iCategoriaProdutoRepository.findById(id);

@@ -40,7 +40,8 @@ public class LinhaCategoriaRest {
     }
 
     @PostMapping("/import-csv-linhas")
-    public void importCSV(@RequestParam MultipartFile file) throws Exception {
+    public void importCSV(@RequestParam("file") MultipartFile file) throws Exception {
+
         linhaCategoriaService.readAll(file);
     }
 

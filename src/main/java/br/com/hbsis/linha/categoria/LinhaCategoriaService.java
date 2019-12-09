@@ -2,6 +2,7 @@ package br.com.hbsis.linha.categoria;
 
 import br.com.hbsis.categoria.produto.CategoriaProduto;
 import br.com.hbsis.categoria.produto.CategoriaProdutoDTO;
+import br.com.hbsis.categoria.produto.CategoriaProdutoService;
 import br.com.hbsis.categoria.produto.ICategoriaProdutoRepository;
 import com.google.common.net.HttpHeaders;
 import com.opencsv.*;
@@ -26,11 +27,12 @@ public class LinhaCategoriaService {
 
     private final ILinhaCategoriaRepository iLinhaCategoriaRepository;
     private final ICategoriaProdutoRepository iCategoriaProdutoRepository;
+    private final CategoriaProdutoService categoriaProdutoService;
 
-    public LinhaCategoriaService(ILinhaCategoriaRepository iLinhaCategoriaRepository, ICategoriaProdutoRepository iCategoriaProdutoRepository) {
+    public LinhaCategoriaService(ILinhaCategoriaRepository iLinhaCategoriaRepository, ICategoriaProdutoRepository iCategoriaProdutoRepository, CategoriaProdutoService categoriaProdutoService) {
         this.iLinhaCategoriaRepository = iLinhaCategoriaRepository;
         this.iCategoriaProdutoRepository = iCategoriaProdutoRepository;
-
+        this.categoriaProdutoService = categoriaProdutoService;
     }
 
     public List<LinhaCategoriaDTO> listar() {
@@ -97,21 +99,30 @@ public class LinhaCategoriaService {
         List<LinhaCategoria> resultadoLeitura = new ArrayList<>();
 
         for (String[] linha : linhaString) {
+
             try {
                 String[] bean = linha[0].replaceAll("\"", "").split(";");
 
                 LinhaCategoria linhaCategoria = new LinhaCategoria();
+                CategoriaProduto categoriaProduto = categoriaProdutoService.findByCodigoCategoriaProduto(bean[2]);
 
-                linhaCategoria.setIdLinhaCategoria(Long.parseLong(bean[0]));
-                linhaCategoria.setCategoriaProduto(iCategoriaProdutoRepository.findById(Long.parseLong(bean[1])).get());
-                linhaCategoria.setNomeLinhaCategoria(bean[2]);
+                String codigo = String.format("%1$10s", bean[0]);
+                codigo = codigo.replaceAll(" ", "0");
 
-                resultadoLeitura.add(linhaCategoria);
+                linhaCategoria.setCodigoLinhaCategoria(codigo);
+                linhaCategoria.setCategoriaProduto(categoriaProduto);
+                linhaCategoria.setNomeLinhaCategoria(bean[1]);
+
+                if (!(iLinhaCategoriaRepository.existsByCodigoLinhaCategoria(linhaCategoria.getCodigoLinhaCategoria()))) {
+                    save(LinhaCategoriaDTO.of(linhaCategoria));
+                    resultadoLeitura.add(linhaCategoria);
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return iLinhaCategoriaRepository.saveAll(resultadoLeitura);
+        return resultadoLeitura;
     }
 
     public LinhaCategoriaDTO save(LinhaCategoriaDTO linhaCategoriaDTO) {
