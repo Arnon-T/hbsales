@@ -34,7 +34,7 @@ public class CategoriaProdutoService {
         this.fornecedorService = fornecedorService;
     }
 
-    public List<CategoriaProduto> readAll(MultipartFile file) throws Exception {
+    public List<CategoriaProdutoDTO> readAll(MultipartFile file) throws Exception {
 
         InputStreamReader reader = new InputStreamReader(file.getInputStream());
 
@@ -45,25 +45,32 @@ public class CategoriaProdutoService {
 
         List<String[]> linhaString = csvReader.readAll();
 
-        List<CategoriaProduto> resultadoLeitura = new ArrayList<>();
+        List<CategoriaProdutoDTO> resultadoLeitura = new ArrayList<>();
 
         for (String[] linha : linhaString) {
             try {
 
                 String[] bean = linha[0].replaceAll("\"", "").split(";");
 
-                CategoriaProduto categoriaProduto = new CategoriaProduto();
+                CategoriaProdutoDTO categoriaProdutoDTO = new CategoriaProdutoDTO();
 
-                categoriaProduto.setCodigoCategoriaProduto(bean[1]);
-                categoriaProduto.setNomeCategoriaProduto(bean[2]);
-                categoriaProduto.setFornecedor(fornecedorService.fromDto(fornecedorService.findById(Long.parseLong(bean[3])), new Fornecedor()));
+                Fornecedor fornecedor = this.fornecedorService.findByCnpj(bean[3].replaceAll("[-/.]", ""));
 
-                resultadoLeitura.add(categoriaProduto);
+                categoriaProdutoDTO.setCodigoCategoriaProduto(bean[0]);
+                categoriaProdutoDTO.setNomeCategoriaProduto(bean[1]);
+                categoriaProdutoDTO.setFornecedorId(fornecedor.getId());
+
+                if (!(iCategoriaProdutoRepository.existsCategoriaProdutoByCodigoCategoriaProduto(categoriaProdutoDTO.getCodigoCategoriaProduto())) ||
+                        !(iCategoriaProdutoRepository.existsCategoriaProdutoByCodigoCategoriaProduto(construtorCodigo(categoriaProdutoDTO.getCodigoCategoriaProduto(), categoriaProdutoDTO.getFornecedorId())))) {
+                    save(categoriaProdutoDTO);
+                    resultadoLeitura.add(categoriaProdutoDTO);
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return iCategoriaProdutoRepository.saveAll(resultadoLeitura);
+        return resultadoLeitura;
     }
 
     public void exportCSV(HttpServletResponse response) {
@@ -83,13 +90,11 @@ public class CategoriaProdutoService {
 
             String headerCSV[] = {"codigo_categoria", "nome_categoria", "razao_social_fornecedor", "cnpj_fornecedor"};
             csvWriter.writeNext(headerCSV);
-            MaskFormatter mask = new MaskFormatter("###.###.###/####-##");
 
             for (CategoriaProduto linha : iCategoriaProdutoRepository.findAll()) {
-                String formatCNPJ = mask.valueToString(linha.getFornecedor().getCnpj());
+                String formatCNPJ = linha.getFornecedor().getCnpj().replaceAll("(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})", "$1.$2.$3/$4-$5");
 
                 csvWriter.writeNext(new String[]{
-                        linha.getId().toString(),
                         linha.getCodigoCategoriaProduto(),
                         linha.getNomeCategoriaProduto(),
                         linha.getFornecedor().getRazaoSocial(),
@@ -97,7 +102,7 @@ public class CategoriaProdutoService {
                 });
             }
 
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
