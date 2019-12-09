@@ -10,22 +10,33 @@ import javax.persistence.*;
 public class LinhaCategoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_linha_categoria")
+    @Column(name = "id")
     private Long idLinhaCategoria;
+
+    @Column(name = "codigo")
+    String codigoLinhaCategoria;
 
     @ManyToOne
     @JoinColumn(name = "id_categoria_produto", referencedColumnName = "id")
     CategoriaProduto categoriaProduto;
 
-    @Column(name = "nome_linha_categoria")
+    @Column(name = "nome")
     String nomeLinhaCategoria;
+
+    public Long getIdLinhaCategoria() {
+        return idLinhaCategoria;
+    }
 
     public void setIdLinhaCategoria(Long idLinhaCategoria) {
         this.idLinhaCategoria = idLinhaCategoria;
     }
 
-    public Long getIdLinhaCategoria() {
-        return idLinhaCategoria;
+    public String getCodigoLinhaCategoria() {
+        return codigoLinhaCategoria;
+    }
+
+    public void setCodigoLinhaCategoria(String codigoLinhaCategoria) {
+        this.codigoLinhaCategoria = codigoLinhaCategoria;
     }
 
     public CategoriaProduto getCategoriaProduto() {

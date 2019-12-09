@@ -33,7 +33,7 @@ public class Produto {
     @Column(name = "preco")
     Double precoProduto;
     @ManyToOne
-    @JoinColumn(name = "id_linha_categoria", referencedColumnName = "id_linha_categoria")
+    @JoinColumn(name = "id_linha_categoria", referencedColumnName = "id")
     LinhaCategoria linhaCategoria;
     @Column(name = "unidades_caixa")
     Double unidadesCaixa;

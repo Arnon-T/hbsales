@@ -1,5 +1,7 @@
 package br.com.hbsis.linha.categoria;
 
+import br.com.hbsis.categoria.produto.CategoriaProduto;
+import br.com.hbsis.categoria.produto.CategoriaProdutoDTO;
 import br.com.hbsis.categoria.produto.ICategoriaProdutoRepository;
 import com.google.common.net.HttpHeaders;
 import com.opencsv.*;
@@ -31,11 +33,25 @@ public class LinhaCategoriaService {
 
     }
 
-    public List<LinhaCategoria> findAll() {
-        return iLinhaCategoriaRepository.findAll();
+    public List<LinhaCategoriaDTO> listar() {
+
+        List<LinhaCategoriaDTO> linhaCategoriaDTOList = new ArrayList<>();
+
+        for (LinhaCategoria linhaCategoria : this.iLinhaCategoriaRepository.findAll()) {
+            LinhaCategoriaDTO linhaCategoriaDTO = new LinhaCategoriaDTO();
+
+            linhaCategoriaDTO.setIdLinhaCategoria(linhaCategoria.getIdLinhaCategoria());
+            linhaCategoriaDTO.setCategoriaProdutoId(linhaCategoria.getCategoriaProduto().getId());
+            linhaCategoriaDTO.setNomeLinhaCategoria(linhaCategoria.getNomeLinhaCategoria());
+            linhaCategoriaDTO.setCodigoLinhaCategoria(linhaCategoria.getCodigoLinhaCategoria());
+
+            linhaCategoriaDTOList.add(linhaCategoriaDTO);
+        }
+
+        return linhaCategoriaDTOList;
     }
 
-    public void exportCSV(HttpServletResponse response) throws Exception{
+    public void exportCSV(HttpServletResponse response) {
         try {
             String fileName = "linhas.csv";
             response.setContentType("text/csv");
@@ -54,15 +70,14 @@ public class LinhaCategoriaService {
             csvWriter.writeNext(headerCSV);
 
             for (LinhaCategoria linha : iLinhaCategoriaRepository.findAll()) {
-                csvWriter.writeNext(new String[] {linha.getIdLinhaCategoria().toString(), linha.getCategoriaProduto().getId().toString(), linha.getNomeLinhaCategoria()});
+                csvWriter.writeNext(new String[]{linha.getIdLinhaCategoria().toString(), linha.getCategoriaProduto().getId().toString(), linha.getNomeLinhaCategoria()});
             }
 
             csvWriter.flush();
             csvWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
 
         }
     }
@@ -107,7 +122,11 @@ public class LinhaCategoriaService {
 
         LinhaCategoria linhaCategoria = new LinhaCategoria();
 
+        String codigo = String.format("%1$10s", linhaCategoriaDTO.getCodigoLinhaCategoria());
+        codigo = codigo.replaceAll(" ", "0");
+
         linhaCategoria.setNomeLinhaCategoria(linhaCategoriaDTO.getNomeLinhaCategoria());
+        linhaCategoria.setCodigoLinhaCategoria(codigo);
         linhaCategoria.setCategoriaProduto(iCategoriaProdutoRepository.findById(linhaCategoriaDTO.getCategoriaProdutoId()).get());
 
         linhaCategoria = this.iLinhaCategoriaRepository.save(linhaCategoria);
@@ -128,6 +147,11 @@ public class LinhaCategoriaService {
         if (StringUtils.isEmpty(linhaCategoriaDTO.getNomeLinhaCategoria())) {
             throw new IllegalArgumentException("Nome de Linha Categoria não poder ser nulo/vazio.");
         }
+
+        if (linhaCategoriaDTO.getCodigoLinhaCategoria().length() > 10) {
+            throw new IllegalArgumentException("Codigo de Linha Categoria não poder ser maior que 10 dígitos.");
+        }
+
     }
 
     public LinhaCategoriaDTO findById(Long id) {
@@ -151,8 +175,12 @@ public class LinhaCategoriaService {
             LOGGER.debug("Payload: {}", linhaCategoriaDTO);
             LOGGER.debug("Linha categoria existente: {}", linhaCategoriaExistente);
 
-            linhaCategoriaExistente.setCategoriaProduto(iCategoriaProdutoRepository.findById(linhaCategoriaDTO.getCategoriaProdutoId()).get());
+            String codigo = String.format("%1$10s", linhaCategoriaDTO.getCodigoLinhaCategoria());
+            codigo = codigo.replaceAll(" ", "0");
+
             linhaCategoriaExistente.setNomeLinhaCategoria(linhaCategoriaDTO.getNomeLinhaCategoria());
+            linhaCategoriaExistente.setCodigoLinhaCategoria(codigo);
+            linhaCategoriaExistente.setCategoriaProduto(iCategoriaProdutoRepository.findById(linhaCategoriaDTO.getCategoriaProdutoId()).get());
 
             linhaCategoriaExistente = this.iLinhaCategoriaRepository.save(linhaCategoriaExistente);
 

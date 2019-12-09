@@ -1,5 +1,6 @@
 package br.com.hbsis.linha.categoria;
 
+import br.com.hbsis.categoria.produto.CategoriaProdutoDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.websocket.server.PathParam;
+import java.util.List;
 
 @RestController
 @RequestMapping("/linhacategorias")
@@ -63,6 +65,14 @@ public class LinhaCategoriaRest {
         LOGGER.info("Recebendo Delete para Linha Categoria de ID: {}", id);
 
         this.linhaCategoriaService.delete(id);
+    }
+
+    @GetMapping("/listar")
+    public List<LinhaCategoriaDTO> listar(){
+
+        LOGGER.info("Gerando lista de Linhas.");
+
+        return this.linhaCategoriaService.listar();
     }
 
 
