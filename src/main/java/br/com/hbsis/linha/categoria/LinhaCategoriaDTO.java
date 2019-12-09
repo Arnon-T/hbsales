@@ -1,31 +1,26 @@
 package br.com.hbsis.linha.categoria;
 
-import br.com.hbsis.categoria.produto.CategoriaProduto;
-import br.com.hbsis.categoria.produto.CategoriaProdutoDTO;
-
 public class LinhaCategoriaDTO {
 
     private Long idLinhaCategoria;
-    private CategoriaProduto categoriaProduto;
+    private String codigoLinhaCategoria;
+    private Long categoriaProdutoId;
     private String nomeLinhaCategoria;
 
     public LinhaCategoriaDTO(){ }
 
-    public LinhaCategoriaDTO(Long idLinhaCategoria, CategoriaProduto categoriaProduto, String nomeLinhaCategoria){
+    public LinhaCategoriaDTO(Long idLinhaCategoria, String codigoLinhaCategoria, Long categoriaProdutoId, String nomeLinhaCategoria) {
         this.idLinhaCategoria = idLinhaCategoria;
-        this.categoriaProduto = categoriaProduto;
-        this.nomeLinhaCategoria = nomeLinhaCategoria;
-    }
-
-    public LinhaCategoriaDTO(CategoriaProduto categoriaProduto, String nomeLinhaCategoria) {
-        this.categoriaProduto = categoriaProduto;
+        this.codigoLinhaCategoria = codigoLinhaCategoria;
+        this.categoriaProdutoId = categoriaProdutoId;
         this.nomeLinhaCategoria = nomeLinhaCategoria;
     }
 
     public static LinhaCategoriaDTO of(LinhaCategoria linhaCategoria){
         return new LinhaCategoriaDTO(
                 linhaCategoria.getIdLinhaCategoria(),
-                linhaCategoria.getCategoriaProduto(),
+                linhaCategoria.getCodigoLinhaCategoria(),
+                linhaCategoria.getCategoriaProduto().getId(),
                 linhaCategoria.getNomeLinhaCategoria()
         );
     }
@@ -34,19 +29,40 @@ public class LinhaCategoriaDTO {
         return idLinhaCategoria;
     }
 
-    public CategoriaProduto getCategoriaProduto() { return categoriaProduto; }
+    public void setIdLinhaCategoria(Long idLinhaCategoria) {
+        this.idLinhaCategoria = idLinhaCategoria;
+    }
 
-    public void setCategoriaProduto(CategoriaProduto categoriaProduto) { this.categoriaProduto = categoriaProduto;}
+    public String getCodigoLinhaCategoria() {
+        return codigoLinhaCategoria;
+    }
 
-    public String getNomeLinhaCategoria() { return nomeLinhaCategoria; }
+    public void setCodigoLinhaCategoria(String codigoLinhaCategoria) {
+        this.codigoLinhaCategoria = codigoLinhaCategoria;
+    }
 
-    public void setNomeLinhaCategoria(String nomeLinhaCategoria) { this.nomeLinhaCategoria = nomeLinhaCategoria; }
+    public Long getCategoriaProdutoId() {
+        return categoriaProdutoId;
+    }
+
+    public void setCategoriaProdutoId(Long categoriaProdutoId) {
+        this.categoriaProdutoId = categoriaProdutoId;
+    }
+
+    public String getNomeLinhaCategoria() {
+        return nomeLinhaCategoria;
+    }
+
+    public void setNomeLinhaCategoria(String nomeLinhaCategoria) {
+        this.nomeLinhaCategoria = nomeLinhaCategoria;
+    }
 
     @Override
     public String toString() {
         return "LinhaCategoriaDTO{" +
                 "idLinhaCategoria=" + idLinhaCategoria +
-                ", categoriaProduto=" + categoriaProduto +
+                ", codigoLinhaCategoria='" + codigoLinhaCategoria + '\'' +
+                ", categoriaProdutoId=" + categoriaProdutoId +
                 ", nomeLinhaCategoria='" + nomeLinhaCategoria + '\'' +
                 '}';
     }
