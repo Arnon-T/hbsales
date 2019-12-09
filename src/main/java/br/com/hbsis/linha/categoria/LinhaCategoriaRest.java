@@ -1,11 +1,5 @@
 package br.com.hbsis.linha.categoria;
 
-import com.google.common.net.HttpHeaders;
-import com.opencsv.CSVWriter;
-import com.opencsv.CSVWriterBuilder;
-import com.opencsv.ICSVWriter;
-import org.apache.http.client.methods.HttpHead;
-import org.hibernate.boot.spi.InFlightMetadataCollector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.websocket.server.PathParam;
-import java.io.PrintWriter;
 
 @RestController
 @RequestMapping("/linhacategorias")
@@ -39,26 +32,9 @@ public class LinhaCategoriaRest {
     @GetMapping("/export-csv-linhas")
     public void exportCSV(HttpServletResponse response) throws Exception {
 
-        String nomearquivo = "linhas.csv";
-        response.setContentType("text/csv");
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; nomearquivo=\"" + nomearquivo + "\"");
+        LOGGER.info("Exportando arquivo linhas.csv");
 
-        PrintWriter writer = response.getWriter();
-
-        ICSVWriter csvWriter = new CSVWriterBuilder(writer)
-                .withSeparator(';')
-                .withEscapeChar(CSVWriter.DEFAULT_ESCAPE_CHARACTER)
-                .withLineEnd(CSVWriter.DEFAULT_LINE_END)
-                .build();
-
-        String headerCSV[] = {"id_linha_categoria", "id_categoria_produto", "nome_linha_categoria"};
-        csvWriter.writeNext(headerCSV);
-
-        for (LinhaCategoria linha : linhaCategoriaService.findAll()) {
-            csvWriter.writeNext(new String[] {linha.getIdLinhaCategoria().toString(), linha.getCategoriaProduto().getId().toString(), linha.getNomeLinhaCategoria()});
-        }
-
+        this.linhaCategoriaService.exportCSV(response);
     }
 
     @PostMapping("/import-csv-linhas")
@@ -67,7 +43,7 @@ public class LinhaCategoriaRest {
     }
 
     @GetMapping("/{id}")
-    public LinhaCategoriaDTO find(@PathParam("id") Long id){
+    public LinhaCategoriaDTO find(@PathVariable("id") Long id){
 
         LOGGER.info("Recebendo find by ID...[{}]", id);
 
