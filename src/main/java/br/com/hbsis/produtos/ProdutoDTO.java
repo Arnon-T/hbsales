@@ -1,18 +1,24 @@
 package br.com.hbsis.produtos;
 
+import br.com.hbsis.util.UnidadeMedida;
+
 import java.time.LocalDate;
 
 public class ProdutoDTO {
     private Long id;
-    private Long codigoProduto;
+    private String codigoProduto;
     private String nomeProduto;
     private Double precoProduto;
     private Long linhaCategoriaId;
-    private Double unidadesCaixa;
+    private int unidadesCaixa;
     private Double pesoUnidade;
     private LocalDate dataValidade;
+    private UnidadeMedida unidadeMedida;
 
-    public ProdutoDTO(Long id, Long codigoProduto, String nomeProduto, Double precoProduto, Long linhaCategoriaId, Double unidadesCaixa, Double pesoUnidade, LocalDate dataValidade) {
+    public ProdutoDTO() {
+    }
+
+    public ProdutoDTO(Long id, String codigoProduto, String nomeProduto, Double precoProduto, Long linhaCategoriaId, int unidadesCaixa, Double pesoUnidade, LocalDate dataValidade, UnidadeMedida unidadeMedida) {
         this.id = id;
         this.codigoProduto = codigoProduto;
         this.nomeProduto = nomeProduto;
@@ -21,6 +27,7 @@ public class ProdutoDTO {
         this.unidadesCaixa = unidadesCaixa;
         this.pesoUnidade = pesoUnidade;
         this.dataValidade = dataValidade;
+        this.unidadeMedida = unidadeMedida;
     }
 
     public static ProdutoDTO of (Produto produto){
@@ -32,7 +39,8 @@ public class ProdutoDTO {
                 produto.getLinhaCategoria().getIdLinhaCategoria(),
                 produto.getUnidadesCaixa(),
                 produto.getPesoUnidade(),
-                produto.getDataValidade()
+                produto.getDataValidade(),
+                produto.getUnidadeMedida()
                 );
     }
 
@@ -40,11 +48,15 @@ public class ProdutoDTO {
         return id;
     }
 
-    public Long getCodigoProduto() {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCodigoProduto() {
         return codigoProduto;
     }
 
-    public void setCodigoProduto(Long codigoProduto) {
+    public void setCodigoProduto(String codigoProduto) {
         this.codigoProduto = codigoProduto;
     }
 
@@ -72,11 +84,11 @@ public class ProdutoDTO {
         this.linhaCategoriaId = linhaCategoriaId;
     }
 
-    public Double getUnidadesCaixa() {
+    public int getUnidadesCaixa() {
         return unidadesCaixa;
     }
 
-    public void setUnidadesCaixa(Double unidadesCaixa) {
+    public void setUnidadesCaixa(int unidadesCaixa) {
         this.unidadesCaixa = unidadesCaixa;
     }
 
@@ -96,6 +108,14 @@ public class ProdutoDTO {
         this.dataValidade = dataValidade;
     }
 
+    public UnidadeMedida getUnidadeMedida() {
+        return unidadeMedida;
+    }
+
+    public void setUnidadeMedida(UnidadeMedida unidadeMedida) {
+        this.unidadeMedida = unidadeMedida;
+    }
+
     @Override
     public String toString() {
         return "ProdutoDTO{" +
@@ -107,6 +127,7 @@ public class ProdutoDTO {
                 ", unidadesCaixa=" + unidadesCaixa +
                 ", pesoUnidade=" + pesoUnidade +
                 ", dataValidade=" + dataValidade +
+                ", unidadeMedida=" + unidadeMedida +
                 '}';
     }
 }

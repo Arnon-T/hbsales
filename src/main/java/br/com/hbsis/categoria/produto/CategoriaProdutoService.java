@@ -56,7 +56,7 @@ public class CategoriaProdutoService {
 
                 Fornecedor fornecedor = this.fornecedorService.findByCnpj(bean[3].replaceAll("[-/.]", ""));
 
-                categoriaProdutoDTO.setCodigoCategoriaProduto(bean[0]);
+                categoriaProdutoDTO.setCodigoCategoriaProduto(bean[0].toUpperCase());
                 categoriaProdutoDTO.setNomeCategoriaProduto(bean[1]);
                 categoriaProdutoDTO.setFornecedorId(fornecedor.getId());
 
@@ -120,7 +120,7 @@ public class CategoriaProdutoService {
 
         categoriaProduto.setNomeCategoriaProduto(categoriaProdutoDTO.getNomeCategoriaProduto());
         categoriaProduto.setFornecedor(fornecedorService.fromDto(fornecedorService.findById(categoriaProdutoDTO.getFornecedorId()), new Fornecedor()));
-        categoriaProduto.setCodigoCategoriaProduto(construtorCodigo(categoriaProdutoDTO.getCodigoCategoriaProduto(), categoriaProdutoDTO.getFornecedorId()));
+        categoriaProduto.setCodigoCategoriaProduto(construtorCodigo(categoriaProdutoDTO.getCodigoCategoriaProduto(), categoriaProdutoDTO.getFornecedorId()).toUpperCase());
 
         categoriaProduto = this.iCategoriaProdutoRepository.save(categoriaProduto);
 
@@ -131,8 +131,8 @@ public class CategoriaProdutoService {
         String codigoGerado = null;
         FornecedorDTO fornecedorDto = fornecedorService.findById(idFornecedor);
         if (codigoInformado.length() < 3) {
-            codigoInformado = String.format("%1$3s", codigoInformado);
-            codigoInformado = codigoInformado.replaceAll(" ", "0");
+            codigoInformado = String.format("%1$3s", codigoInformado).replaceAll(" ", "0").toUpperCase();
+
         }
         codigoGerado = "CAT" + fornecedorDto.getCnpj().substring(10, 14) + codigoInformado;
 

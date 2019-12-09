@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 
 @RestController
@@ -76,6 +77,11 @@ public class ProdutoRest{
         LOGGER.info("Recebendo Delete para produto de ID: {}", id);
 
         this.produtoService.delete(id);
+    }
+
+    @GetMapping("/listar")
+    public List<ProdutoDTO> listar(){
+        return this.produtoService.listar();
     }
 
 }

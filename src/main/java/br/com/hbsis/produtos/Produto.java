@@ -1,23 +1,12 @@
 package br.com.hbsis.produtos;
 
 import br.com.hbsis.linha.categoria.LinhaCategoria;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.springframework.format.annotation.DateTimeFormat;
+import br.com.hbsis.util.UnidadeMedida;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
-/*A1. O Cadastro deve conter:
-a.	Código do Produto
-b.	Nome
-c.	Preço
-d.	Linha de Categoria
-e.	Unidade por Caixa
-f.	Peso por Unidade
-g.	Validade
-A2. Uma linha pode ter N produtos, porém um produto pode ter apenas UMA linha.
-*/
+
 @Entity
 @Table(name = "seg_produtos")
 public class Produto {
@@ -25,22 +14,25 @@ public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long id;
+    private Long id;
     @Column(name = "codigo")
-    Long codigoProduto;
+    private String codigoProduto;
     @Column(name = "nome")
-    String nomeProduto;
+    private String nomeProduto;
     @Column(name = "preco")
-    Double precoProduto;
+    private Double precoProduto;
     @ManyToOne
     @JoinColumn(name = "id_linha_categoria", referencedColumnName = "id")
-    LinhaCategoria linhaCategoria;
+    private LinhaCategoria linhaCategoria;
     @Column(name = "unidades_caixa")
-    Double unidadesCaixa;
+    private int unidadesCaixa;
     @Column(name = "peso_unidade")
-    Double pesoUnidade;
+    private Double pesoUnidade;
     @Column(name = "data_validade")
-    LocalDate dataValidade;
+    private LocalDate dataValidade;
+    @Column(name = "unidade_medida")
+    @Enumerated(EnumType.STRING)
+    private UnidadeMedida unidadeMedida;
 
     public Long getId() {
         return id;
@@ -50,11 +42,11 @@ public class Produto {
         this.id = id;
     }
 
-    public Long getCodigoProduto() {
+    public String getCodigoProduto() {
         return codigoProduto;
     }
 
-    public void setCodigoProduto(Long codigoProduto) {
+    public void setCodigoProduto(String codigoProduto) {
         this.codigoProduto = codigoProduto;
     }
 
@@ -82,11 +74,11 @@ public class Produto {
         this.linhaCategoria = linhaCategoria;
     }
 
-    public Double getUnidadesCaixa() {
+    public int getUnidadesCaixa() {
         return unidadesCaixa;
     }
 
-    public void setUnidadesCaixa(Double unidadesCaixa) {
+    public void setUnidadesCaixa(int unidadesCaixa) {
         this.unidadesCaixa = unidadesCaixa;
     }
 
@@ -106,6 +98,14 @@ public class Produto {
         this.dataValidade = dataValidade;
     }
 
+    public UnidadeMedida getUnidadeMedida() {
+        return unidadeMedida;
+    }
+
+    public void setUnidadeMedida(UnidadeMedida unidadeMedida) {
+        this.unidadeMedida = unidadeMedida;
+    }
+
     @Override
     public String toString() {
         return "Produto{" +
@@ -113,10 +113,11 @@ public class Produto {
                 ", codigoProduto=" + codigoProduto +
                 ", nomeProduto='" + nomeProduto + '\'' +
                 ", precoProduto=" + precoProduto +
-                ", linhaCategoria=" + linhaCategoria.toString() +
+                ", linhaCategoria=" + linhaCategoria +
                 ", unidadesCaixa=" + unidadesCaixa +
                 ", pesoUnidade=" + pesoUnidade +
-                ", dataValidade='" + dataValidade + '\'' +
+                ", dataValidade=" + dataValidade +
+                ", unidadeMedida=" + unidadeMedida +
                 '}';
     }
 }

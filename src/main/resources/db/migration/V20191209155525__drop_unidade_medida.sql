@@ -1,0 +1,1 @@
+drop table seg_unidade_medida;

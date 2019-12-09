@@ -107,7 +107,7 @@ public class LinhaCategoriaService {
                 CategoriaProduto categoriaProduto = categoriaProdutoService.findByCodigoCategoriaProduto(bean[2]);
 
                 String codigo = String.format("%1$10s", bean[0]);
-                codigo = codigo.replaceAll(" ", "0");
+                codigo = codigo.replaceAll(" ", "0").toUpperCase();
 
                 linhaCategoria.setCodigoLinhaCategoria(codigo);
                 linhaCategoria.setCategoriaProduto(categoriaProduto);
