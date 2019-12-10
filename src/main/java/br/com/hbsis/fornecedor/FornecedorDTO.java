@@ -1,28 +1,25 @@
 package br.com.hbsis.fornecedor;
 
+import br.com.hbsis.util.CnpjValidation;
+
+import javax.validation.constraints.Email;
+
 public class FornecedorDTO {
+
     private Long id;
     private String razaoSocial;
+    @CnpjValidation(length = 14)
     private String cnpj;
     private String nomeFantasia;
     private String endereco;
-    private int telefone;
+    private String telefone;
+    @Email
     private String email;
 
     public FornecedorDTO(){
     }
 
-
-
-    public FornecedorDTO(String razaoSocial, String cnpj, String endereco, int telefone, String email) {
-        this.razaoSocial = razaoSocial;
-        this.cnpj = cnpj;
-        this.endereco = endereco;
-        this.telefone = telefone;
-        this.email = email;
-    }
-
-    public FornecedorDTO(Long id, String razaoSocial, String cnpj, String nomeFantasia, String endereco, int telefone, String email) {
+    public FornecedorDTO(Long id, String razaoSocial, String cnpj, String nomeFantasia, String endereco, String telefone, String email) {
         this.id = id;
         this.razaoSocial = razaoSocial;
         this.cnpj = cnpj;
@@ -44,9 +41,12 @@ public class FornecedorDTO {
         );
     }
 
-
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getRazaoSocial() {
@@ -81,11 +81,11 @@ public class FornecedorDTO {
         this.endereco = endereco;
     }
 
-    public int getTelefone() {
+    public String getTelefone() {
         return telefone;
     }
 
-    public void setTelefone(int telefone) {
+    public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 
