@@ -87,6 +87,10 @@ public class FornecedorService {
         throw new IllegalArgumentException(String.format("ID %s não existe", id));
     }
 
+    public boolean existsById(Long id){
+        return this.iFornecedorRepository.existsById(id);
+    }
+
     public static Fornecedor fromDto(FornecedorDTO fornecedorDTO, Fornecedor fornecedor){
         fornecedor.setId(fornecedorDTO.getId());
         fornecedor.setRazaoSocial(fornecedorDTO.getRazaoSocial());

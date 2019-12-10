@@ -8,4 +8,6 @@ public interface ILinhaCategoriaRepository extends JpaRepository<LinhaCategoria,
 
     boolean existsByCodigoLinhaCategoria(String codigoLinhaCategoria);
 
+    LinhaCategoria findByCodigoLinhaCategoria(String codigoLinhaCategoria);
+
 }

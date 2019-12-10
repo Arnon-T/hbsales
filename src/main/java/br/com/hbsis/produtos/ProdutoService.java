@@ -3,6 +3,8 @@ package br.com.hbsis.produtos;
 import br.com.hbsis.fornecedor.FornecedorService;
 import br.com.hbsis.fornecedor.IFornecedorRepository;
 import br.com.hbsis.linha.categoria.ILinhaCategoriaRepository;
+import br.com.hbsis.linha.categoria.LinhaCategoriaService;
+import br.com.hbsis.util.UnidadeMedida;
 import com.google.common.net.HttpHeaders;
 import com.opencsv.*;
 import org.slf4j.Logger;
@@ -28,14 +30,17 @@ public class ProdutoService {
     private final Logger LOGGER = LoggerFactory.getLogger(ProdutoService.class);
 
     private final IProdutoRepository iProdutoRepository;
-    private final ILinhaCategoriaRepository iLinhaCategoriaRepository;
-    private final IFornecedorRepository iFornecedorRepository;
-    private BigDecimal precoFormat;
+    private final FornecedorService fornecedorService;
+    private final LinhaCategoriaService linhaCategoriaService;
 
-    public ProdutoService(IProdutoRepository iProdutoRepository, ILinhaCategoriaRepository iLinhaCategoriaRepository, IFornecedorRepository iFornecedorRepository) {
+    private UnidadeMedida unidadeMedida;
+    private BigDecimal precoFormat;
+    final DateTimeFormatter localDateFormatt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    public ProdutoService(IProdutoRepository iProdutoRepository, FornecedorService fornecedorService, LinhaCategoriaService linhaCategoriaService) {
         this.iProdutoRepository = iProdutoRepository;
-        this.iLinhaCategoriaRepository = iLinhaCategoriaRepository;
-        this.iFornecedorRepository = iFornecedorRepository;
+        this.fornecedorService = fornecedorService;
+        this.linhaCategoriaService = linhaCategoriaService;
     }
 
     public void exportCSV(HttpServletResponse response) {
@@ -89,9 +94,10 @@ public class ProdutoService {
     }
 
     public List<Produto> readAll(MultipartFile file) throws Exception {
-        InputStreamReader inputStreamReader = new InputStreamReader(file.getInputStream());
 
-        CSVReader csvReader = new CSVReaderBuilder(inputStreamReader)
+        InputStreamReader inputStreamReader = new InputStreamReader(file.getInputStream());
+        CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
+        CSVReader csvReader = new CSVReaderBuilder(inputStreamReader).withCSVParser(parser)
                 .withSkipLines(1)
                 .build();
 
@@ -99,33 +105,46 @@ public class ProdutoService {
 
         List<Produto> resultadoLeitura = new ArrayList<>();
 
-        for (String[] linha : linhaString) {
+        for (String[] bean : linhaString) {
             try {
-                String[] bean = linha[0].replaceAll("\"", "").split(";");
 
                 Produto produto = new Produto();
 
-                produto.setId(Long.parseLong(bean[0]));
-                produto.setCodigoProduto(bean[1]);
-                produto.setNomeProduto(bean[2]);
-                produto.setPrecoProduto(Double.parseDouble(bean[3]));
-                produto.setLinhaCategoria(iLinhaCategoriaRepository.findById(Long.parseLong(bean[4])).get());
-                produto.setUnidadesCaixa(Integer.parseInt(bean[5]));
-                produto.setPesoUnidade(Double.parseDouble(bean[6]));
-                produto.setDataValidade(LocalDate.parse(bean[7]));
+                LocalDate dataValidade = LocalDate.parse(bean[5], localDateFormatt);
+                String precoFormatt = bean[2].replaceAll("R\\$", "");
+                precoFormatt = precoFormatt.replaceAll(",", ".");
 
-                resultadoLeitura.add(produto);
+                String pesoFormatt = bean[4].replaceAll(",", ".");
+                pesoFormatt = pesoFormatt.replaceAll("[^0-9 .]+", "");
+
+                String unidadeMedidaFormatt = bean[4].replaceAll("[^a-zA-Z]+", "");
+
+                produto.setCodigoProduto(bean[0]);
+                produto.setNomeProduto(bean[1]);
+                produto.setPrecoProduto(Double.parseDouble(precoFormatt));
+                produto.setUnidadesCaixa(Integer.parseInt(bean[3]));
+                produto.setPesoUnidade(Double.parseDouble(pesoFormatt));
+                produto.setUnidadeMedida(UnidadeMedida.valueOf(unidadeMedidaFormatt));
+                produto.setDataValidade(dataValidade);
+
+                if(linhaCategoriaService.existsByCodigoLinhaCategoria(bean[6]) && !(this.existsByCodigoProduto(bean[0]))){
+                    produto.setLinhaCategoria(linhaCategoriaService.findByCodigoLinhaCategoria(bean[6]));
+                    resultadoLeitura.add(produto);
+                    this.iProdutoRepository.save(produto);
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return iProdutoRepository.saveAll(resultadoLeitura);
+        return resultadoLeitura;
     }
 
     public void importProdutoFornecedor(Long id, MultipartFile file) throws Exception {
         InputStreamReader inputStreamReader = new InputStreamReader(file.getInputStream());
 
-        CSVReader csvReader = new CSVReaderBuilder(inputStreamReader)
+        CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
+        CSVReader csvReader = new CSVReaderBuilder(inputStreamReader).withCSVParser(parser)
                 .withSkipLines(1)
                 .build();
 
@@ -133,16 +152,15 @@ public class ProdutoService {
 
         List<Produto> resultadoLeitura = new ArrayList<>();
 
-        for (String[] linha : linhaString) {
+        for (String[] bean : linhaString) {
             try {
-                String[] bean = linha[0].replaceAll("\"", "").split(";");
 
                 Produto produto = new Produto();
-                if (iFornecedorRepository.existsById(id)) {
+                if (fornecedorService.existsById(id)) {
                     produto.setCodigoProduto(bean[1]);
                     produto.setNomeProduto(bean[2]);
                     produto.setPrecoProduto(Double.parseDouble(bean[3]));
-                    produto.setLinhaCategoria(iLinhaCategoriaRepository.findById(Long.parseLong(bean[4])).get());
+                    produto.setLinhaCategoria(linhaCategoriaService.findByIdObject(Long.parseLong(bean[4])));
                     produto.setUnidadesCaixa(Integer.parseInt(bean[5]));
                     produto.setPesoUnidade(Double.parseDouble(bean[6]));
                     produto.setDataValidade(LocalDate.parse(bean[7]));
@@ -185,7 +203,7 @@ public class ProdutoService {
         produto.setCodigoProduto(codigo);
         produto.setNomeProduto(produtoDTO.getNomeProduto());
         produto.setPrecoProduto(produtoDTO.getPrecoProduto());
-        produto.setLinhaCategoria(iLinhaCategoriaRepository.findById(produtoDTO.getLinhaCategoriaId()).get());
+        produto.setLinhaCategoria(linhaCategoriaService.findByIdObject(produtoDTO.getLinhaCategoriaId()));
         produto.setUnidadesCaixa(produtoDTO.getUnidadesCaixa());
         produto.setPesoUnidade(produtoDTO.getPesoUnidade());
         produto.setDataValidade(produtoDTO.getDataValidade());
@@ -211,8 +229,18 @@ public class ProdutoService {
         if (produtoOptional.isPresent()) {
             return ProdutoDTO.of(produtoOptional.get());
         }
-        throw new IllegalArgumentException(String.format("ID %s não existe.", id));
+        throw new IllegalArgumentException(String.format("ID %d não existe.", id));
     }
+
+    public Produto findByIdObjeto(Long id){
+        Optional<Produto> produtoOptional = this.iProdutoRepository.findById(id);
+
+        if(produtoOptional.isPresent()){
+            return produtoOptional.get();
+        }
+        throw new IllegalArgumentException(String.format("ID %d não existe.", id));
+    }
+
 
     public ProdutoDTO update(ProdutoDTO produtoDTO, Long id) {
 
@@ -232,7 +260,7 @@ public class ProdutoService {
             produtoExistente.setCodigoProduto(codigo);
             produtoExistente.setNomeProduto(produtoDTO.getNomeProduto());
             produtoExistente.setPrecoProduto(produtoDTO.getPrecoProduto());
-            produtoExistente.setLinhaCategoria(iLinhaCategoriaRepository.findById(produtoDTO.getLinhaCategoriaId()).get());
+            produtoExistente.setLinhaCategoria( linhaCategoriaService.findByIdObject(produtoDTO.getLinhaCategoriaId()));
             produtoExistente.setUnidadesCaixa(produtoDTO.getUnidadesCaixa());
             produtoExistente.setPesoUnidade(produtoDTO.getPesoUnidade());
             produtoExistente.setDataValidade(produtoDTO.getDataValidade());
@@ -278,5 +306,10 @@ public class ProdutoService {
         this.iProdutoRepository.deleteById(id);
     }
 
+    public boolean existsByCodigoProduto(String codigoProduto){
+        Optional<Produto> produtoOptional = this.iProdutoRepository.findByCodigoProduto(codigoProduto);
+
+        return produtoOptional.isPresent();
+    }
 
 }

@@ -6,6 +6,7 @@ import br.com.hbsis.categoria.produto.CategoriaProdutoService;
 import br.com.hbsis.categoria.produto.ICategoriaProdutoRepository;
 import com.google.common.net.HttpHeaders;
 import com.opencsv.*;
+import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -176,6 +177,16 @@ public class LinhaCategoriaService {
         throw new IllegalArgumentException(String.format("ID %s não existe.", id));
     }
 
+    public LinhaCategoria findByIdObject(Long id){
+        Optional<LinhaCategoria> linhaCategoriaOptional = this.iLinhaCategoriaRepository.findById(id);
+
+        if(linhaCategoriaOptional.isPresent()){
+            return linhaCategoriaOptional.get();
+        }
+        throw new IllegalArgumentException(String.format("ID %d não existe", id));
+    }
+
+
     public LinhaCategoriaDTO update(LinhaCategoriaDTO linhaCategoriaDTO, Long id) {
 
         Optional<LinhaCategoria> linhaCategoriaOptional = this.iLinhaCategoriaRepository.findById(id);
@@ -208,5 +219,13 @@ public class LinhaCategoriaService {
 
         this.iLinhaCategoriaRepository.deleteById(id);
     }
+
+    public LinhaCategoria findByCodigoLinhaCategoria(String codigoLinhaCategoria){
+        return this.iLinhaCategoriaRepository.findByCodigoLinhaCategoria(codigoLinhaCategoria);
+    }
+
+    public boolean existsByCodigoLinhaCategoria(String codigoLinhaCategoria){
+        return this.iLinhaCategoriaRepository.existsByCodigoLinhaCategoria(codigoLinhaCategoria);
+    };
 
 }
