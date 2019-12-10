@@ -130,6 +130,7 @@ public class CategoriaProdutoService {
     public String construtorCodigo(String codigoInformado, Long idFornecedor) {
         String codigoGerado = null;
         FornecedorDTO fornecedorDto = fornecedorService.findById(idFornecedor);
+        codigoInformado = codigoInformado.replaceAll("[^a-zA-Z0-9]+", "");
         if (codigoInformado.length() < 3) {
             codigoInformado = String.format("%1$3s", codigoInformado).replaceAll(" ", "0").toUpperCase();
 

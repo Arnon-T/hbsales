@@ -80,8 +80,6 @@ public class LinhaCategoriaService {
                 });
             }
 
-//            csvWriter.flush();
-//            csvWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -106,7 +104,7 @@ public class LinhaCategoriaService {
                 LinhaCategoria linhaCategoria = new LinhaCategoria();
                 CategoriaProduto categoriaProduto = categoriaProdutoService.findByCodigoCategoriaProduto(bean[2]);
 
-                String codigo = String.format("%1$10s", bean[0]);
+                String codigo = String.format("%1$10s", bean[0].replaceAll("[^a-zA-Z0-9]+", ""));
                 codigo = codigo.replaceAll(" ", "0").toUpperCase();
 
                 linhaCategoria.setCodigoLinhaCategoria(codigo);
@@ -136,8 +134,8 @@ public class LinhaCategoriaService {
 
         LinhaCategoria linhaCategoria = new LinhaCategoria();
 
-        String codigo = String.format("%1$10s", linhaCategoriaDTO.getCodigoLinhaCategoria());
-        codigo = codigo.replaceAll(" ", "0");
+        String codigo = String.format("%1$10s", linhaCategoriaDTO.getCodigoLinhaCategoria().replaceAll("[^a-zA-Z0-9]+", ""));
+        codigo = codigo.replaceAll(" ", "0").toUpperCase();
 
         linhaCategoria.setNomeLinhaCategoria(linhaCategoriaDTO.getNomeLinhaCategoria());
         linhaCategoria.setCodigoLinhaCategoria(codigo);
@@ -189,8 +187,8 @@ public class LinhaCategoriaService {
             LOGGER.debug("Payload: {}", linhaCategoriaDTO);
             LOGGER.debug("Linha categoria existente: {}", linhaCategoriaExistente);
 
-            String codigo = String.format("%1$10s", linhaCategoriaDTO.getCodigoLinhaCategoria());
-            codigo = codigo.replaceAll(" ", "0");
+            String codigo = String.format("%1$10s", linhaCategoriaDTO.getCodigoLinhaCategoria().replaceAll("[^a-zA-Z0-9]+", ""));
+            codigo = codigo.replaceAll(" ", "0").toUpperCase();
 
             linhaCategoriaExistente.setNomeLinhaCategoria(linhaCategoriaDTO.getNomeLinhaCategoria());
             linhaCategoriaExistente.setCodigoLinhaCategoria(codigo);
