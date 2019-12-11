@@ -1,8 +1,12 @@
 package br.com.hbsis.produtos;
 
+import br.com.hbsis.categoria.produto.CategoriaProduto;
+import br.com.hbsis.categoria.produto.CategoriaProdutoDTO;
+import br.com.hbsis.categoria.produto.CategoriaProdutoService;
+import br.com.hbsis.fornecedor.Fornecedor;
 import br.com.hbsis.fornecedor.FornecedorService;
-import br.com.hbsis.fornecedor.IFornecedorRepository;
-import br.com.hbsis.linha.categoria.ILinhaCategoriaRepository;
+import br.com.hbsis.linha.categoria.LinhaCategoria;
+import br.com.hbsis.linha.categoria.LinhaCategoriaDTO;
 import br.com.hbsis.linha.categoria.LinhaCategoriaService;
 import br.com.hbsis.util.UnidadeMedida;
 import com.google.common.net.HttpHeaders;
@@ -11,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import sun.text.bidi.BidiBase;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStreamReader;
@@ -32,15 +35,16 @@ public class ProdutoService {
     private final IProdutoRepository iProdutoRepository;
     private final FornecedorService fornecedorService;
     private final LinhaCategoriaService linhaCategoriaService;
+    private final CategoriaProdutoService categoriaProdutoService;
 
-    private UnidadeMedida unidadeMedida;
     private BigDecimal precoFormat;
     final DateTimeFormatter localDateFormatt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    public ProdutoService(IProdutoRepository iProdutoRepository, FornecedorService fornecedorService, LinhaCategoriaService linhaCategoriaService) {
+    public ProdutoService(IProdutoRepository iProdutoRepository, FornecedorService fornecedorService, LinhaCategoriaService linhaCategoriaService, CategoriaProdutoService categoriaProdutoService) {
         this.iProdutoRepository = iProdutoRepository;
         this.fornecedorService = fornecedorService;
         this.linhaCategoriaService = linhaCategoriaService;
+        this.categoriaProdutoService = categoriaProdutoService;
     }
 
     public void exportCSV(HttpServletResponse response) {
@@ -97,7 +101,8 @@ public class ProdutoService {
 
         InputStreamReader inputStreamReader = new InputStreamReader(file.getInputStream());
         CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
-        CSVReader csvReader = new CSVReaderBuilder(inputStreamReader).withCSVParser(parser)
+        CSVReader csvReader = new CSVReaderBuilder(inputStreamReader)
+                .withCSVParser(parser)
                 .withSkipLines(1)
                 .build();
 
@@ -127,7 +132,7 @@ public class ProdutoService {
                 produto.setUnidadeMedida(UnidadeMedida.valueOf(unidadeMedidaFormatt));
                 produto.setDataValidade(dataValidade);
 
-                if(linhaCategoriaService.existsByCodigoLinhaCategoria(bean[6]) && !(this.existsByCodigoProduto(bean[0]))){
+                if (linhaCategoriaService.existsByCodigoLinhaCategoria(bean[6]) && !(this.existsByCodigoProduto(bean[0]))) {
                     produto.setLinhaCategoria(linhaCategoriaService.findByCodigoLinhaCategoria(bean[6]));
                     resultadoLeitura.add(produto);
                     this.iProdutoRepository.save(produto);
@@ -144,45 +149,69 @@ public class ProdutoService {
         InputStreamReader inputStreamReader = new InputStreamReader(file.getInputStream());
 
         CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
-        CSVReader csvReader = new CSVReaderBuilder(inputStreamReader).withCSVParser(parser)
+        CSVReader csvReader = new CSVReaderBuilder(inputStreamReader)
+                .withCSVParser(parser)
                 .withSkipLines(1)
                 .build();
 
         List<String[]> linhaString = csvReader.readAll();
 
-        List<Produto> resultadoLeitura = new ArrayList<>();
-
         for (String[] bean : linhaString) {
             try {
 
-                Produto produto = new Produto();
+                ProdutoDTO produtoDTO = new ProdutoDTO();
+                CategoriaProduto categoriaProduto = new CategoriaProduto();
+                LinhaCategoria linhaCategoria = linhaCategoriaService.findByCodigoLinhaCategoria(bean[7]);
+                LocalDate dataValidade = LocalDate.parse(bean[6], localDateFormatt);
+
+                produtoDTO.setCodigoProduto(bean[0]);
+                produtoDTO.setNomeProduto(bean[1]);
+                produtoDTO.setPrecoProduto(Double.parseDouble(bean[2]));
+                produtoDTO.setUnidadesCaixa(Integer.parseInt(bean[3]));
+                produtoDTO.setPesoUnidade(Double.parseDouble(bean[4]));
+                produtoDTO.setUnidadeMedida(UnidadeMedida.valueOf(bean[5]));
+                produtoDTO.setDataValidade(dataValidade);
+                produtoDTO.setLinhaCategoriaId(linhaCategoria.getIdLinhaCategoria());
+
                 if (fornecedorService.existsById(id)) {
-                    produto.setCodigoProduto(bean[1]);
-                    produto.setNomeProduto(bean[2]);
-                    produto.setPrecoProduto(Double.parseDouble(bean[3]));
-                    produto.setLinhaCategoria(linhaCategoriaService.findByIdObject(Long.parseLong(bean[4])));
-                    produto.setUnidadesCaixa(Integer.parseInt(bean[5]));
-                    produto.setPesoUnidade(Double.parseDouble(bean[6]));
-                    produto.setDataValidade(LocalDate.parse(bean[7]));
 
-                    if (iProdutoRepository.existsByCodigoProduto(produto.getCodigoProduto()) &&
-                            id == produto.getLinhaCategoria().getCategoriaProduto().getFornecedor().getId()) {
-
-                        produto.setId(iProdutoRepository.findByCodigoProduto(produto.getCodigoProduto()).get().getId());
-                        update(ProdutoDTO.of(produto), produto.getId());
-
-                    } else if (id == produto.getLinhaCategoria().getCategoriaProduto().getFornecedor().getId()) {
-                        iProdutoRepository.save(produto);
-                    } else {
-
-                        LOGGER.info("Produto {} ... pertence a outro fornecedor.", produto.getCodigoProduto());
-
+                    if(!(categoriaProdutoService.existsCategoriaProdutoByFornecedorId(id))){
+                        categoriaProduto.setFornecedor(FornecedorService.fromDto(fornecedorService.findById(id), new Fornecedor()));
+                        categoriaProduto.setNomeCategoriaProduto(bean[10]);
+                        categoriaProduto.setCodigoCategoriaProduto(bean[9]);
+                        categoriaProduto.setId(categoriaProdutoService.save(CategoriaProdutoDTO.of(categoriaProduto)).getId());
+                    }if(!(linhaCategoriaService.existsByCodigoLinhaCategoria(bean[9]))){
+                        linhaCategoria.setCategoriaProduto(categoriaProduto);
+                        linhaCategoria.setNomeLinhaCategoria(bean[8]);
+                        linhaCategoria.setCodigoLinhaCategoria(bean[9]);
+                        linhaCategoria.setIdLinhaCategoria(linhaCategoriaService.save(LinhaCategoriaDTO.of(linhaCategoria)).getIdLinhaCategoria());
+                    }if(linhaCategoriaService.existsByCodigoLinhaCategoria(bean[9])) {
+                        linhaCategoria.setCategoriaProduto(categoriaProduto);
+                        linhaCategoria.setNomeLinhaCategoria(bean[8]);
+                        linhaCategoria.setCodigoLinhaCategoria(bean[9]);
+                        linhaCategoriaService.update(LinhaCategoriaDTO.of(linhaCategoria), linhaCategoria.getIdLinhaCategoria());
+                    }
+                    if(existsByCodigoProduto(bean[0])){
+                        update(produtoDTO, findByCodigoProduto(bean[0]).getId());
+                    }
+                    if(!(existsByCodigoProduto(bean[0]))){
+                        produtoDTO.setLinhaCategoriaId(linhaCategoria.getIdLinhaCategoria());
+                        save(produtoDTO);
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public Produto findByCodigoProduto(String codigoProduto) {
+        Optional<Produto> produtoOptional = this.iProdutoRepository.findByCodigoProduto(codigoProduto);
+
+        if (produtoOptional.isPresent()) {
+            return produtoOptional.get();
+        }
+        throw new IllegalArgumentException(String.format("Codigo %s não existe.", codigoProduto));
     }
 
     public ProdutoDTO save(ProdutoDTO produtoDTO) {
@@ -231,17 +260,6 @@ public class ProdutoService {
         }
         throw new IllegalArgumentException(String.format("ID %d não existe.", id));
     }
-
-    public Produto findByIdObjeto(Long id){
-        Optional<Produto> produtoOptional = this.iProdutoRepository.findById(id);
-
-        if(produtoOptional.isPresent()){
-            return produtoOptional.get();
-        }
-        throw new IllegalArgumentException(String.format("ID %d não existe.", id));
-    }
-
-
     public ProdutoDTO update(ProdutoDTO produtoDTO, Long id) {
 
         Optional<Produto> produtoOptional = this.iProdutoRepository.findById(id);
@@ -260,7 +278,7 @@ public class ProdutoService {
             produtoExistente.setCodigoProduto(codigo);
             produtoExistente.setNomeProduto(produtoDTO.getNomeProduto());
             produtoExistente.setPrecoProduto(produtoDTO.getPrecoProduto());
-            produtoExistente.setLinhaCategoria( linhaCategoriaService.findByIdObject(produtoDTO.getLinhaCategoriaId()));
+            produtoExistente.setLinhaCategoria(linhaCategoriaService.findByIdObject(produtoDTO.getLinhaCategoriaId()));
             produtoExistente.setUnidadesCaixa(produtoDTO.getUnidadesCaixa());
             produtoExistente.setPesoUnidade(produtoDTO.getPesoUnidade());
             produtoExistente.setDataValidade(produtoDTO.getDataValidade());
@@ -299,14 +317,13 @@ public class ProdutoService {
         return produtoDTOList;
     }
 
-
     public void delete(Long id) {
         LOGGER.info("Executando delete para produto de ID [{}]", id);
 
         this.iProdutoRepository.deleteById(id);
     }
 
-    public boolean existsByCodigoProduto(String codigoProduto){
+    public boolean existsByCodigoProduto(String codigoProduto) {
         Optional<Produto> produtoOptional = this.iProdutoRepository.findByCodigoProduto(codigoProduto);
 
         return produtoOptional.isPresent();

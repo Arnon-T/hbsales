@@ -13,8 +13,11 @@ public interface ICategoriaProdutoRepository extends JpaRepository<CategoriaProd
 
     boolean existsCategoriaProdutoByCodigoCategoriaProduto(String codigoCategoriaProduto);
 
+    boolean existsCategoriaProdutoByFornecedorId(Long id);
+
     @Override
     boolean existsById(Long id);
 
     CategoriaProduto findByCodigoCategoriaProduto(String codigoCategoriaProduto);
+
 }

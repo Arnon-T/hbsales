@@ -22,7 +22,7 @@ public class CategoriaProdutoRest {
     }
 
     @PostMapping
-    public CategoriaProdutoDTO save(@RequestBody CategoriaProdutoDTO categoriaProdutoDTO) {
+    public CategoriaProduto save(@RequestBody CategoriaProdutoDTO categoriaProdutoDTO) {
 
         LOGGER.info("Recebendo solicitação de persistência de categoria produto...");
         LOGGER.debug("Payload: {}", categoriaProdutoDTO);

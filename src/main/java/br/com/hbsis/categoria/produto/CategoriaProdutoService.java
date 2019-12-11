@@ -109,7 +109,7 @@ public class CategoriaProdutoService {
 
     }
 
-    public CategoriaProdutoDTO save(CategoriaProdutoDTO categoriaProdutoDTO) {
+    public CategoriaProduto save(CategoriaProdutoDTO categoriaProdutoDTO) {
 
         this.validate(categoriaProdutoDTO);
 
@@ -124,7 +124,7 @@ public class CategoriaProdutoService {
 
         categoriaProduto = this.iCategoriaProdutoRepository.save(categoriaProduto);
 
-        return CategoriaProdutoDTO.of(categoriaProduto);
+        return categoriaProduto;
     }
 
     public String construtorCodigo(String codigoInformado, Long idFornecedor) {
@@ -223,6 +223,14 @@ public class CategoriaProdutoService {
         LOGGER.info("Executando delete para categoria produto de ID> [{}]", id);
 
         this.iCategoriaProdutoRepository.deleteById(id);
+    }
+
+    public boolean existsCategoriaProdutoByFornecedorId(Long id){
+        return this.iCategoriaProdutoRepository.existsCategoriaProdutoByFornecedorId(id);
+    }
+
+    public boolean existsCategoriaProdutoByCodigoCategoriaProduto(String codigoCategoriaProduto){
+        return this.iCategoriaProdutoRepository.existsCategoriaProdutoByCodigoCategoriaProduto(codigoCategoriaProduto);
     }
 
 }

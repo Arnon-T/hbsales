@@ -1,5 +1,6 @@
 package br.com.hbsis.produtos;
 
+
 import br.com.hbsis.linha.categoria.LinhaCategoria;
 import br.com.hbsis.util.UnidadeMedida;
 

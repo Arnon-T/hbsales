@@ -5,11 +5,9 @@ import br.com.hbsis.categoria.produto.CategoriaProdutoService;
 import br.com.hbsis.fornecedor.FornecedorDTO;
 import br.com.hbsis.fornecedor.FornecedorService;
 import br.com.hbsis.pedido.IPedidoRepository;
-import br.com.hbsis.pedido.Pedido;
 import br.com.hbsis.pedido.PedidoDTO;
 import br.com.hbsis.periodo.venda.PeriodoVendaService;
 import br.com.hbsis.produtos.IProdutoRepository;
-import br.com.hbsis.produtos.Produto;
 import br.com.hbsis.produtos.ProdutoDTO;
 import br.com.hbsis.produtos.ProdutoService;
 import org.slf4j.Logger;
@@ -44,7 +42,7 @@ public class PedidoItemService {
         this.periodoVendaService = periodoVendaService;
     }
 
-    public List<PedidoItem> saveAll(List<PedidoItem> pedidoItemList) {
+   public List<PedidoItem> saveAll(List<PedidoItem> pedidoItemList) {
 
         LOGGER.info("Salvando itens do pedido validados.");
 
