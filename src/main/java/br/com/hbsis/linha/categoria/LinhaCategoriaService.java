@@ -86,6 +86,10 @@ public class LinhaCategoriaService {
         }
     }
 
+    public List<LinhaCategoriaDTO> findAllByCategoriaProdutoId(Long categoriaProdutoId) {
+        return iLinhaCategoriaRepository.findAllByCategoriaProdutoId(categoriaProdutoId);
+    }
+
     public List<LinhaCategoria> readAll(MultipartFile file) throws Exception {
         InputStreamReader reader = new InputStreamReader(file.getInputStream());
 
@@ -141,10 +145,9 @@ public class LinhaCategoriaService {
         linhaCategoria.setNomeLinhaCategoria(linhaCategoriaDTO.getNomeLinhaCategoria());
         linhaCategoria.setCodigoLinhaCategoria(codigo);
         linhaCategoria.setCategoriaProduto(iCategoriaProdutoRepository.findById(linhaCategoriaDTO.getCategoriaProdutoId()).get());
-
         linhaCategoria = this.iLinhaCategoriaRepository.save(linhaCategoria);
-
         return LinhaCategoriaDTO.of(linhaCategoria);
+
     }
 
     public void validate(LinhaCategoriaDTO linhaCategoriaDTO) {
@@ -177,15 +180,35 @@ public class LinhaCategoriaService {
         throw new IllegalArgumentException(String.format("ID %s não existe.", id));
     }
 
-    public LinhaCategoria findByIdObject(Long id){
+    public LinhaCategoria findByIdObject(Long id) {
         Optional<LinhaCategoria> linhaCategoriaOptional = this.iLinhaCategoriaRepository.findById(id);
 
-        if(linhaCategoriaOptional.isPresent()){
+        if (linhaCategoriaOptional.isPresent()) {
             return linhaCategoriaOptional.get();
         }
         throw new IllegalArgumentException(String.format("ID %d não existe", id));
     }
 
+    public boolean uniqueLinha(String codigo, Long categoriaProdutoId) {
+
+        List<LinhaCategoriaDTO> linhaCategoriaDTOList = new ArrayList<>();
+        linhaCategoriaDTOList.addAll(findAllByCategoriaProdutoId(categoriaProdutoId));
+        String[] codigoFormatt = new String[2];
+
+        codigoFormatt[0] = String.format("%1$10s", codigo.replaceAll("[^a-zA-Z0-9]+", ""));
+        codigoFormatt[0] = codigo.replaceAll(" ", "0").toUpperCase();
+        codigoFormatt[0] = categoriaProdutoId + codigoFormatt[0];
+
+        codigoFormatt[1] = categoriaProdutoId + codigo;
+
+        for (LinhaCategoriaDTO linhaCategoriaDTO : linhaCategoriaDTOList) {
+            String codigoComparado = linhaCategoriaDTO.getCategoriaProdutoId() + linhaCategoriaDTO.getCodigoLinhaCategoria();
+            if (codigoFormatt[0].equals(codigoComparado) || codigoFormatt[1].equals(codigoComparado)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public LinhaCategoriaDTO update(LinhaCategoriaDTO linhaCategoriaDTO, Long id) {
 
@@ -204,10 +227,9 @@ public class LinhaCategoriaService {
             linhaCategoriaExistente.setNomeLinhaCategoria(linhaCategoriaDTO.getNomeLinhaCategoria());
             linhaCategoriaExistente.setCodigoLinhaCategoria(codigo);
             linhaCategoriaExistente.setCategoriaProduto(iCategoriaProdutoRepository.findById(linhaCategoriaDTO.getCategoriaProdutoId()).get());
-
             linhaCategoriaExistente = this.iLinhaCategoriaRepository.save(linhaCategoriaExistente);
-
             return linhaCategoriaDTO.of(linhaCategoriaExistente);
+
         }
 
         throw new IllegalArgumentException((String.format("ID %s não existe", id)));
@@ -220,12 +242,14 @@ public class LinhaCategoriaService {
         this.iLinhaCategoriaRepository.deleteById(id);
     }
 
-    public LinhaCategoria findByCodigoLinhaCategoria(String codigoLinhaCategoria){
+    public LinhaCategoria findByCodigoLinhaCategoria(String codigoLinhaCategoria) {
         return this.iLinhaCategoriaRepository.findByCodigoLinhaCategoria(codigoLinhaCategoria);
     }
 
-    public boolean existsByCodigoLinhaCategoria(String codigoLinhaCategoria){
+    public boolean existsByCodigoLinhaCategoria(String codigoLinhaCategoria) {
         return this.iLinhaCategoriaRepository.existsByCodigoLinhaCategoria(codigoLinhaCategoria);
-    };
+    }
+
+    ;
 
 }

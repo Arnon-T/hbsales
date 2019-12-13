@@ -59,7 +59,8 @@ public class LinhaCategoria {
     public String toString() {
         return "LinhaCategoria{" +
                 "idLinhaCategoria=" + idLinhaCategoria +
-                ", categoriaProdutoId=" + categoriaProduto.toString() +
+                ", codigoLinhaCategoria='" + codigoLinhaCategoria + '\'' +
+                ", categoriaProduto=" + categoriaProduto +
                 ", nomeLinhaCategoria='" + nomeLinhaCategoria + '\'' +
                 '}';
     }

@@ -64,9 +64,9 @@ public class CategoriaProduto {
     public String toString() {
         return "CategoriaProduto{" +
                 "id=" + id +
-                ", codigoCategoriaProduto=" + codigoCategoriaProduto +
+                ", codigoCategoriaProduto='" + codigoCategoriaProduto + '\'' +
                 ", nomeCategoriaProduto='" + nomeCategoriaProduto + '\'' +
-                ", fornecedor=" + fornecedor.toString() +
+                ", fornecedor=" + fornecedor +
                 '}';
     }
 }

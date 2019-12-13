@@ -25,6 +25,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 
 @Service
@@ -132,11 +134,9 @@ public class ProdutoService {
                 produto.setUnidadeMedida(UnidadeMedida.valueOf(unidadeMedidaFormatt));
                 produto.setDataValidade(dataValidade);
 
-                if (linhaCategoriaService.existsByCodigoLinhaCategoria(bean[6]) && !(this.existsByCodigoProduto(bean[0]))) {
-                    produto.setLinhaCategoria(linhaCategoriaService.findByCodigoLinhaCategoria(bean[6]));
-                    resultadoLeitura.add(produto);
-                    this.iProdutoRepository.save(produto);
-                }
+                produto.setLinhaCategoria(linhaCategoriaService.findByCodigoLinhaCategoria(bean[6]));
+                resultadoLeitura.add(produto);
+                this.iProdutoRepository.save(produto);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -157,51 +157,105 @@ public class ProdutoService {
         List<String[]> linhaString = csvReader.readAll();
 
         for (String[] bean : linhaString) {
-            try {
 
-                ProdutoDTO produtoDTO = new ProdutoDTO();
-                CategoriaProduto categoriaProduto = new CategoriaProduto();
-                LinhaCategoria linhaCategoria = linhaCategoriaService.findByCodigoLinhaCategoria(bean[7]);
-                LocalDate dataValidade = LocalDate.parse(bean[6], localDateFormatt);
 
-                produtoDTO.setCodigoProduto(bean[0]);
-                produtoDTO.setNomeProduto(bean[1]);
-                produtoDTO.setPrecoProduto(Double.parseDouble(bean[2]));
-                produtoDTO.setUnidadesCaixa(Integer.parseInt(bean[3]));
-                produtoDTO.setPesoUnidade(Double.parseDouble(bean[4]));
-                produtoDTO.setUnidadeMedida(UnidadeMedida.valueOf(bean[5]));
-                produtoDTO.setDataValidade(dataValidade);
-                produtoDTO.setLinhaCategoriaId(linhaCategoria.getIdLinhaCategoria());
+            ProdutoDTO produtoDTO = new ProdutoDTO();
+            CategoriaProduto categoriaProduto = new CategoriaProduto();
+            LinhaCategoria linhaCategoria = new LinhaCategoria();
+            LinhaCategoriaDTO linhaCategoriaDTO = new LinhaCategoriaDTO();
+            LocalDate dataValidade = LocalDate.parse(bean[6], localDateFormatt);
 
-                if (fornecedorService.existsById(id)) {
+            String precoFormatt = bean[2].replaceAll("R\\$", "");
+            precoFormatt = precoFormatt.replaceAll(",", ".");
 
-                    if(!(categoriaProdutoService.existsCategoriaProdutoByFornecedorId(id))){
-                        categoriaProduto.setFornecedor(FornecedorService.fromDto(fornecedorService.findById(id), new Fornecedor()));
+            String codigo = String.format("%1$10s", bean[7].replaceAll("[^a-zA-Z0-9]+", ""));
+            codigo = codigo.replaceAll(" ", "0").toUpperCase();
+
+            produtoDTO.setCodigoProduto(bean[0]);
+            produtoDTO.setNomeProduto(bean[1]);
+            produtoDTO.setPrecoProduto(Double.parseDouble(precoFormatt));
+            produtoDTO.setUnidadesCaixa(Integer.parseInt(bean[3]));
+            produtoDTO.setPesoUnidade(Double.parseDouble(bean[4].replaceAll(",", ".")));
+            produtoDTO.setUnidadeMedida(UnidadeMedida.valueOf(bean[5]));
+            produtoDTO.setDataValidade(dataValidade);
+
+            if (fornecedorService.existsById(id)) {
+
+                try {
+                    if (!(categoriaProdutoService.existsCategoriaProdutoByCodigoCategoriaProduto(bean[9]))
+                            && !(categoriaProdutoService.existsCategoriaProdutoByCodigoCategoriaProduto(categoriaProdutoService.construtorCodigo(bean[9], id)))) {
+                        Fornecedor fornecedor = FornecedorService.fromDto(fornecedorService.findById(id), new Fornecedor());
+                        categoriaProduto.setFornecedor(fornecedor);
                         categoriaProduto.setNomeCategoriaProduto(bean[10]);
                         categoriaProduto.setCodigoCategoriaProduto(bean[9]);
                         categoriaProduto.setId(categoriaProdutoService.save(CategoriaProdutoDTO.of(categoriaProduto)).getId());
-                    }if(!(linhaCategoriaService.existsByCodigoLinhaCategoria(bean[9]))){
                         linhaCategoria.setCategoriaProduto(categoriaProduto);
-                        linhaCategoria.setNomeLinhaCategoria(bean[8]);
-                        linhaCategoria.setCodigoLinhaCategoria(bean[9]);
-                        linhaCategoria.setIdLinhaCategoria(linhaCategoriaService.save(LinhaCategoriaDTO.of(linhaCategoria)).getIdLinhaCategoria());
-                    }if(linhaCategoriaService.existsByCodigoLinhaCategoria(bean[9])) {
-                        linhaCategoria.setCategoriaProduto(categoriaProduto);
-                        linhaCategoria.setNomeLinhaCategoria(bean[8]);
-                        linhaCategoria.setCodigoLinhaCategoria(bean[9]);
-                        linhaCategoriaService.update(LinhaCategoriaDTO.of(linhaCategoria), linhaCategoria.getIdLinhaCategoria());
+                        LOGGER.info(String.format("Categoria Produto criada. ID %d", categoriaProduto.getId()));
                     }
-                    if(existsByCodigoProduto(bean[0])){
-                        update(produtoDTO, findByCodigoProduto(bean[0]).getId());
-                    }
-                    if(!(existsByCodigoProduto(bean[0]))){
-                        produtoDTO.setLinhaCategoriaId(linhaCategoria.getIdLinhaCategoria());
-                        save(produtoDTO);
-                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    if (!(linhaCategoriaService.existsByCodigoLinhaCategoria(bean[7])) && !(linhaCategoriaService.existsByCodigoLinhaCategoria(codigo))) {
+                        categoriaProduto = categoriaProdutoService.findByCodigoCategoriaProduto(bean[9]);
+                        if (categoriaProduto == null) {
+                            categoriaProduto = categoriaProdutoService.findByCodigoCategoriaProduto(categoriaProdutoService.construtorCodigo(bean[9], id));
+                        }
+                        linhaCategoria.setCategoriaProduto(categoriaProduto);
+                        linhaCategoria.setNomeLinhaCategoria(bean[8]);
+                        linhaCategoria.setCodigoLinhaCategoria(codigo);
+                        linhaCategoriaDTO = linhaCategoriaService.save(LinhaCategoriaDTO.of(linhaCategoria));
+                        linhaCategoria.setIdLinhaCategoria(linhaCategoriaDTO.getIdLinhaCategoria());
+                        linhaCategoria.setCodigoLinhaCategoria(linhaCategoriaDTO.getCodigoLinhaCategoria());
+                        produtoDTO.setLinhaCategoriaId(linhaCategoria.getIdLinhaCategoria());
+                        LOGGER.info(String.format("Linha Categoria criada. ID %d", linhaCategoria.getIdLinhaCategoria()));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    if (linhaCategoriaService.existsByCodigoLinhaCategoria(bean[7]) || linhaCategoriaService.existsByCodigoLinhaCategoria(codigo)) {
+                        categoriaProduto = categoriaProdutoService.findByCodigoCategoriaProduto(bean[9]);
+                        if (categoriaProduto == null) {
+                            categoriaProduto = categoriaProdutoService.findByCodigoCategoriaProduto(categoriaProdutoService.construtorCodigo(bean[9], id));
+                        }
+
+                        linhaCategoria.setCategoriaProduto(categoriaProduto);
+                        linhaCategoria.setNomeLinhaCategoria(bean[8]);
+                        linhaCategoria.setCodigoLinhaCategoria(codigo);
+                        linhaCategoria.setIdLinhaCategoria(linhaCategoriaService.findByCodigoLinhaCategoria(codigo).getIdLinhaCategoria());
+
+                        produtoDTO.setLinhaCategoriaId(linhaCategoria.getIdLinhaCategoria());
+
+                        linhaCategoriaDTO = linhaCategoriaService.update(LinhaCategoriaDTO.of(linhaCategoria), linhaCategoria.getIdLinhaCategoria());
+                        linhaCategoria.setIdLinhaCategoria(linhaCategoriaDTO.getIdLinhaCategoria());
+                        linhaCategoria.setCodigoLinhaCategoria(linhaCategoriaDTO.getCodigoLinhaCategoria());
+                        LOGGER.info(String.format("Linha Categoria atualizada. ID %d", linhaCategoria.getIdLinhaCategoria()));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    if (existsByCodigoProduto(bean[0])) {
+                        produtoDTO.setLinhaCategoriaId(linhaCategoria.getIdLinhaCategoria());
+                        produtoDTO.setId(findByCodigoProduto(bean[0]).getId());
+                        update(produtoDTO, produtoDTO.getId());
+                        LOGGER.info(String.format("Produto atualizado. ID %d", produtoDTO.getId()));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    if (!(existsByCodigoProduto(bean[0]))) {
+                        produtoDTO.setLinhaCategoriaId(linhaCategoriaService.findByCodigoLinhaCategoria(linhaCategoria.getCodigoLinhaCategoria()).getIdLinhaCategoria());
+                        produtoDTO = save(produtoDTO);
+                        LOGGER.info(String.format("Produto criado. ID %d", produtoDTO.getId()));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+
         }
     }
 
@@ -260,6 +314,7 @@ public class ProdutoService {
         }
         throw new IllegalArgumentException(String.format("ID %d não existe.", id));
     }
+
     public ProdutoDTO update(ProdutoDTO produtoDTO, Long id) {
 
         Optional<Produto> produtoOptional = this.iProdutoRepository.findById(id);

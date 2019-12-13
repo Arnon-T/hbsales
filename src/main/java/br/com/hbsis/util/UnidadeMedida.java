@@ -1,7 +1,7 @@
 package br.com.hbsis.util;
 
 public enum UnidadeMedida {
-    Kg,
+    kg,
     g,
     mg;
 

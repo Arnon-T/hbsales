@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 public class CategoriaProdutoService {
@@ -107,6 +108,14 @@ public class CategoriaProdutoService {
         }
 
 
+    }
+
+    public boolean validaInputCodigo(String codigoInformado){
+        if (Pattern.matches("[a-zA-Z]+", codigoInformado) == false && codigoInformado.length() <= 3) {
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public CategoriaProduto save(CategoriaProdutoDTO categoriaProdutoDTO) {

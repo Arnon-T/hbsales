@@ -11,8 +11,6 @@ import java.util.List;
 @Repository
 public interface IFornecedorRepository extends JpaRepository<Fornecedor, Long> {
 
-    List<Fornecedor> findByNomeFantasia(String nome);
-
     Fornecedor findByCnpj(String cnpj);
 
     @Override
