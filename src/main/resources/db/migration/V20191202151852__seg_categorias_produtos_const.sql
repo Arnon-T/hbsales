@@ -1,0 +1,5 @@
+ALTER TABLE seg_categorias_produtos
+ADD CONSTRAINT AK_categoria_fornecedor UNIQUE(nome_categoria_produto, id_fornecedor_categoria_produto);
+
+ALTER TABLE seg_linhas_categorias
+ADD CONSTRAINT AK_linha_categoria UNIQUE(id_categoria_produto, nome_linha_categoria);

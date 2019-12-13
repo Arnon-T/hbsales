@@ -3,6 +3,14 @@ package br.com.hbsis.linha.categoria;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ILinhaCategoriaRepository extends JpaRepository<LinhaCategoria, Long> {
+
+    boolean existsByCodigoLinhaCategoria(String codigoLinhaCategoria);
+
+    LinhaCategoria findByCodigoLinhaCategoria(String codigoLinhaCategoria);
+
+    List<LinhaCategoriaDTO> findAllByCategoriaProdutoId(Long categoriaProdutoId);
 }
