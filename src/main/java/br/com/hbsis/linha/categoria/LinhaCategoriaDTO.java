@@ -1,31 +1,23 @@
 package br.com.hbsis.linha.categoria;
 
-import br.com.hbsis.categoria.produto.CategoriaProduto;
-import br.com.hbsis.categoria.produto.CategoriaProdutoDTO;
-
 public class LinhaCategoriaDTO {
 
     private Long idLinhaCategoria;
-    private CategoriaProduto categoriaProduto;
+    private Long categoriaProdutoId;
     private String nomeLinhaCategoria;
 
     public LinhaCategoriaDTO(){ }
 
-    public LinhaCategoriaDTO(Long idLinhaCategoria, CategoriaProduto categoriaProduto, String nomeLinhaCategoria){
+    public LinhaCategoriaDTO(Long idLinhaCategoria, Long categoriaProdutoId, String nomeLinhaCategoria){
         this.idLinhaCategoria = idLinhaCategoria;
-        this.categoriaProduto = categoriaProduto;
-        this.nomeLinhaCategoria = nomeLinhaCategoria;
-    }
-
-    public LinhaCategoriaDTO(CategoriaProduto categoriaProduto, String nomeLinhaCategoria) {
-        this.categoriaProduto = categoriaProduto;
+        this.categoriaProdutoId = categoriaProdutoId;
         this.nomeLinhaCategoria = nomeLinhaCategoria;
     }
 
     public static LinhaCategoriaDTO of(LinhaCategoria linhaCategoria){
         return new LinhaCategoriaDTO(
                 linhaCategoria.getIdLinhaCategoria(),
-                linhaCategoria.getCategoriaProduto(),
+                linhaCategoria.getCategoriaProduto().getId(),
                 linhaCategoria.getNomeLinhaCategoria()
         );
     }
@@ -34,9 +26,9 @@ public class LinhaCategoriaDTO {
         return idLinhaCategoria;
     }
 
-    public CategoriaProduto getCategoriaProduto() { return categoriaProduto; }
+    public Long getCategoriaProdutoId() { return categoriaProdutoId; }
 
-    public void setCategoriaProduto(CategoriaProduto categoriaProduto) { this.categoriaProduto = categoriaProduto;}
+    public void setCategoriaProduto(Long categoriaProdutoId) { this.categoriaProdutoId = categoriaProdutoId;}
 
     public String getNomeLinhaCategoria() { return nomeLinhaCategoria; }
 
@@ -46,7 +38,7 @@ public class LinhaCategoriaDTO {
     public String toString() {
         return "LinhaCategoriaDTO{" +
                 "idLinhaCategoria=" + idLinhaCategoria +
-                ", categoriaProduto=" + categoriaProduto +
+                ", categoriaProdutoId=" + categoriaProdutoId +
                 ", nomeLinhaCategoria='" + nomeLinhaCategoria + '\'' +
                 '}';
     }
